@@ -1,9 +1,10 @@
+import { File } from "buffer"
 import { v2 } from "cloudinary"
-import { extractPublicId, getTypeFileOfUrl } from "lib/utils"
+import { extractPublicId, getTypeFileOfUrl } from "@/lib/utils"
 v2.config({
   secure: true,
 })
-async function uploadFile(file, type = "image") {
+async function uploadFile(file:File, type = "image") {
   const arrayBuffer = await file.arrayBuffer()
   const buffer = new Uint8Array(arrayBuffer)
   const data = await new Promise((resolve, reject) => {
