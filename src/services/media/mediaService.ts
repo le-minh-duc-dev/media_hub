@@ -1,13 +1,13 @@
 import { File } from "buffer"
-import { v2 } from "cloudinary"
+import { UploadApiResponse, v2 } from "cloudinary"
 import { extractPublicId, getTypeFileOfUrl } from "@/lib/utils"
 v2.config({
   secure: true,
 })
-async function uploadFile(file:File, type = "image") {
+async function uploadFile(file:File, type:"image"|"video" = "image") {
   const arrayBuffer = await file.arrayBuffer()
   const buffer = new Uint8Array(arrayBuffer)
-  const data = await new Promise((resolve, reject) => {
+  const data = await new Promise<UploadApiResponse|undefined>((resolve, reject) => {
     v2.uploader
       .upload_stream(
         { folder: "girlxinh", resource_type: type },
@@ -22,20 +22,20 @@ async function uploadFile(file:File, type = "image") {
       .end(buffer)
   })
 
-  return data?.secure_url || ""
+  return data?.secure_url?? ""
 }
-async function deleteImageByURL(url) {
+async function deleteImageByURL(url:string) {
   if (!url) return
   const publicId = extractPublicId(url)
   await v2.api.delete_resources([publicId])
 }
 
-async function deleteImagesByURLs(urls) {
+async function deleteImagesByURLs(urls:string[]) {
   if (urls.length === 0) return
   await v2.api.delete_resources(urls.map((url) => extractPublicId(url)))
 }
 
-async function deleteVideosByURLs(urls) {
+async function deleteVideosByURLs(urls:string[]) {
   if (urls.length === 0) return
   v2.api.delete_resources(
     urls.map((url) => extractPublicId(url)),
@@ -45,9 +45,9 @@ async function deleteVideosByURLs(urls) {
     }
   )
 }
-async function deleteMediaByURLs(urls) {
-  let imagePublicUrls = urls.filter((url) => getTypeFileOfUrl(url) == "image")
-  let videoPublicUrls = urls.filter((url) => getTypeFileOfUrl(url) == "video")
+async function deleteMediaByURLs(urls:string[]) {
+  const imagePublicUrls:string[] = urls.filter((url) => getTypeFileOfUrl(url) == "image")
+  const videoPublicUrls:string[] = urls.filter((url) => getTypeFileOfUrl(url) == "video")
   await deleteImagesByURLs(imagePublicUrls)
   await deleteVideosByURLs(videoPublicUrls)
 }
