@@ -1,6 +1,8 @@
 import { dbConnect } from "@/database/connect"
 import { GirlSearchParams } from "@/types/girls.types"
 import Girl from "@/database/models/Girl"
+import Topic from "@/database/models/Topic"
+import { PopulateOptions } from "mongoose"
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = 1 // Ascending
@@ -31,7 +33,11 @@ export async function getGirl(
   const validatedPage = page > 0 ? page : DEFAULT_PAGE
   const validatedSort = sort
 
-  const populateConfig = { path: "topic", select: "_id name" }
+  const populateConfig: PopulateOptions = {
+    path: "topic",
+    select: "_id name",
+    model: Topic,
+  }
 
   const girlList = !isFindOne
     ? await Girl.find(query)

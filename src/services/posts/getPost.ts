@@ -1,6 +1,9 @@
 import { dbConnect } from "@/database/connect"
+import Girl from "@/database/models/Girl"
 import Post from "@/database/models/Post"
+import Topic from "@/database/models/Topic"
 import { PostSearchParams } from "@/types/posts.types"
+import { PopulateOptions } from "mongoose"
 
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
@@ -37,12 +40,14 @@ export async function getPost(
   const validatedSort = sort
 
   // Define the populate configuration
-  const populateConfig = {
+  const populateConfig: PopulateOptions = {
     path: "girl",
     select: "_id name description",
+    model: Girl,
     populate: {
       path: "topic",
       select: "_id name",
+      model: Topic,
     },
   }
 

@@ -1,2 +1,2 @@
-export * from "./getPost.js"
-export * from "./countPostList.js"
+export * from "./getPost"
+export * from "./countPostList"
