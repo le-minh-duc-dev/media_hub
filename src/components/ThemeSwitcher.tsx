@@ -10,7 +10,7 @@ import { TbSunHigh } from "react-icons/tb"
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
-  const isDarkMode = theme == "dark"
+  const isDarkMode = theme?.includes("dark")
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -24,9 +24,11 @@ export function ThemeSwitcher() {
         color="default"
         variant="light"
         className={isDarkMode ? "" : "text-xl"}
-        onPress={() => setTheme((pre) => (pre == "light" ? "dark" : "light"))}
+        onPress={() =>
+          setTheme((pre) => (pre.includes("light") ? "dark" : "light"))
+        }
       >
-        {theme == "dark" ? <FaMoon /> : <TbSunHigh />}
+        {theme?.includes("dark") ? <FaMoon /> : <TbSunHigh />}
       </Button>
     </div>
   )

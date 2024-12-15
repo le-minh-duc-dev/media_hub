@@ -7,7 +7,7 @@ import { PopulateOptions } from "mongoose"
 
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 1 // Ascending
+const DEFAULT_SORT = -1 // Ascending
 
 export async function getPost(
   searchParams: PostSearchParams = {},
@@ -50,6 +50,7 @@ export async function getPost(
       model: Topic,
     },
   }
+  
 
   const postList = !isFindOne
     ? await Post.find(query)

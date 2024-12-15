@@ -4,7 +4,7 @@ import React from "react"
 
 export default function Loading() {
   return (
-    <div className="absolute flex justify-center items-center">
+    <div className="absolute flex justify-center items-center w-full h-full">
       <Spinner />
     </div>
   )

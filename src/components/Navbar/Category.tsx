@@ -3,7 +3,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   Button,
-  Link,
   Card,
   Image,
   CardHeader,
@@ -15,10 +14,14 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io"
 import { GirlType } from "@/types/girls.types"
 import { TopicType } from "@/types/topics.types"
 import GirlItem from "../Topics/GirlItem"
+import Link from "next/link"
 export default function Category({
   topicFilterFn,
-  categoryName
-}: Readonly<{ topicFilterFn: (topics: TopicType[]) => TopicType[], categoryName:string }>) {
+  categoryName,
+}: Readonly<{
+  topicFilterFn: (topics: TopicType[]) => TopicType[]
+  categoryName: string
+}>) {
   const { topics, girls } = useContext(NavbarContext)
   const artistTopics = useMemo(
     () => topicFilterFn(topics),
@@ -46,11 +49,11 @@ export default function Category({
       <PopoverTrigger>
         <Button
           disableRipple
-          className="p-0 bg-transparent  data-[hover=true]:bg-transparent font-semibold text-base"
+          className="p-0 bg-transparent  data-[hover=true]:bg-transparent font-semibold text-base "
           endContent={isOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
           variant="light"
         >
-         {categoryName}
+          {categoryName}
         </Button>
       </PopoverTrigger>
       <PopoverContent>
@@ -71,12 +74,15 @@ export default function Category({
           <div className="flex gap-x-4">
             {artistTopics.map((topic) => (
               <div key={topic._id as string} className="flex-1">
-                <Link className="font-semibold hover:underline cursor-pointer mb-4">
+                <Link
+                  href={`/topics/${topic.param}`}
+                  className="font-semibold hover:underline cursor-pointer mb-4 block"
+                >
                   {topic.name}
                 </Link>
                 <ul className="flex flex-col gap-4 ">
                   {girlsPerTopic[topic._id as string].map((girl) => (
-                    <NavGirlItem key={girl._id as string} girl={girl} />
+                    <NavGirlItem key={girl._id as string} girl={girl} closePopover={()=>setIsOpen(false)}/>
                   ))}
                 </ul>
               </div>
@@ -87,25 +93,27 @@ export default function Category({
     </Popover>
   )
 }
-function NavGirlItem({ girl }: { girl: GirlType }) {
+function NavGirlItem({ girl,closePopover }: Readonly<{ girl: GirlType,closePopover:()=>void }>) {
   return (
-    <Tooltip content={<GirlItem girl={girl} />} delay={500}>
-      <Card className="w-[200] hover:bg-foreground/10 cursor-pointer">
-        <CardHeader className="flex gap-3">
-          <Image
-            alt={girl.name}
-            className="object-cover"
-            height={40}
-            radius="sm"
-            src={girl.url}
-            width={40}
-          />
-          <div className="flex flex-col shrink">
-            <p className="text-md">{girl.name}</p>
-            {/* <div  className="text-small text-default-500 line-clamp-1" dangerouslySetInnerHTML={{__html:girl.description}}/> */}
-          </div>
-        </CardHeader>
-      </Card>
-    </Tooltip>
+    <Link href={`/girls/${girl.param}`} onClick={closePopover}>
+      <Tooltip content={<GirlItem girl={girl} />} delay={500}>
+        <Card className="w-[200] hover:bg-content1 cursor-pointer bg-content2">
+          <CardHeader className="flex gap-3">
+            <Image
+              alt={girl.name}
+              className="object-cover"
+              height={40}
+              radius="sm"
+              src={girl.url}
+              width={40}
+            />
+            <div className="flex flex-col shrink">
+              <p className="text-md font-semibold">{girl.name}</p>
+              {/* <div  className="text-small text-default-500 line-clamp-1" dangerouslySetInnerHTML={{__html:girl.description}}/> */}
+            </div>
+          </CardHeader>
+        </Card>
+      </Tooltip>
+    </Link>
   )
 }

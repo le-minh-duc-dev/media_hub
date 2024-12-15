@@ -11,10 +11,10 @@ export default {
       defaultExtendTheme: "light", // default theme to extend on custom themes
       layout: {}, // common layout tokens (applied to all themes)
       themes: {
-        light: {
-          layout: {}, // light theme layout tokens
-          colors: {}, // light theme colors
-        },
+        // light: {
+        //   layout: {}, // light theme layout tokens
+        //   colors: {}, // light theme colors
+        // },
         dark: {
           colors: {
             background: "#000000",

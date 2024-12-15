@@ -10,24 +10,13 @@ import {
   NavbarMenuToggle,
   Input,
 } from "@nextui-org/react"
-import Image from "next/image"
+import dynamic from 'next/dynamic'
+const Image = dynamic(() => import('next/image'), { ssr: false })
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { useTheme } from "next-themes"
 import { IoSearchSharp } from "react-icons/io5"
 import Links from "./Links"
 
-const menuItems = [
-  "Profile",
-  "Dashboard",
-  "Activity",
-  "Analytics",
-  "System",
-  "Deployments",
-  "My Settings",
-  "Team Settings",
-  "Help & Feedback",
-  "Log Out",
-]
 import { NavbarContextType, NavbarProps } from "@/types/navbar.types"
 import { TopicType } from "@/types/topics.types"
 import { GirlType } from "@/types/girls.types"
@@ -36,7 +25,6 @@ export const NavbarContext = React.createContext<NavbarContextType>({
   girls: [],
 })
 export function Navbar(props: Readonly<NavbarProps>) {
-  console.log(props.topics)
   const [isMenuOpen] = React.useState(false)
   const { theme } = useTheme()
   const contextValues = React.useMemo(
@@ -47,8 +35,14 @@ export function Navbar(props: Readonly<NavbarProps>) {
     [props]
   )
   return (
-    <NavbarContext.Provider value={contextValues}>
-      <NextNavbar shouldHideOnScroll height={100} isBlurred maxWidth="xl">
+    <NavbarContext.Provider value={contextValues} >
+      <NextNavbar
+        shouldHideOnScroll
+        height={100}
+        isBlurred
+        maxWidth="xl"
+        className="bg-content2"
+      >
         <NavbarContent>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -57,12 +51,13 @@ export function Navbar(props: Readonly<NavbarProps>) {
           <NavbarBrand>
             <Image
               src={`/assets/images/logo_${
-                theme == "dark" ? "white" : "black"
+                theme?.includes("dark") ? "white" : "black"
               }_sm_300.png`}
               alt="logo"
               width={60}
               height={60}
               className="hidden md:block"
+              // suppressHydrationWarning
             />
           </NavbarBrand>
         </NavbarContent>
@@ -71,11 +66,12 @@ export function Navbar(props: Readonly<NavbarProps>) {
           <NavbarBrand className="flex justify-center">
             <Image
               src={`/assets/images/logo_${
-                theme == "dark" ? "white" : "black"
+                theme?.includes("dark") ? "white" : "black"
               }_sm_300.png`}
               alt="logo"
               width={50}
               height={50}
+              // suppressHydrationWarning
             />
           </NavbarBrand>
         </NavbarContent>
@@ -104,21 +100,10 @@ export function Navbar(props: Readonly<NavbarProps>) {
           <ThemeSwitcher />
         </NavbarContent>
         <NavbarMenu>
-          {menuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                className="w-full"
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item}
+          {contextValues.topics.map((item) => (
+            <NavbarMenuItem key={item._id as string}>
+              <Link className="w-full" href={`/topics/${item.param}`} size="lg">
+                {item.name}
               </Link>
             </NavbarMenuItem>
           ))}

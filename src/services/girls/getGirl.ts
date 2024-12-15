@@ -5,7 +5,7 @@ import Topic from "@/database/models/Topic"
 import { PopulateOptions } from "mongoose"
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 1 // Ascending
+const DEFAULT_SORT = -1 // Ascending
 export async function getGirl(
   searchParams: GirlSearchParams = {},
   isFindOne = false
@@ -21,7 +21,7 @@ export async function getGirl(
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
   } = searchParams
-
+  console.log(topic);
   let query: Record<string, unknown> = {}
   if (param) query.param = param
   if (topic) query.topic = topic
@@ -38,7 +38,7 @@ export async function getGirl(
     select: "_id name",
     model: Topic,
   }
-
+  
   const girlList = !isFindOne
     ? await Girl.find(query)
         .sort({ updatedAt: validatedSort })

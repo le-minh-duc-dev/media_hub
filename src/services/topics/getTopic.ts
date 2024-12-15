@@ -5,7 +5,7 @@ import { TopicSearchParams } from "@/types/topics.types"
 
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 1 // Ascending
+const DEFAULT_SORT = -1 // Ascending
 
 export async function getTopic(
   searchParams: TopicSearchParams = {},
