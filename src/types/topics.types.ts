@@ -1,4 +1,5 @@
-import { SortOrder } from "mongoose"
+import { ObjectId, SortOrder } from "mongoose"
+import { UserType } from "./users.types"
 export interface TopicSearchParams {
   page?: number
   sort?: SortOrder
@@ -6,4 +7,13 @@ export interface TopicSearchParams {
   limit?: number
   search?: string
   isPrivate?: boolean
+}
+
+export type TopicType = {
+  _id: string | ObjectId
+  name: string
+  param: string
+  description: string
+  isPrivate: boolean
+  user: string | UserType
 }
