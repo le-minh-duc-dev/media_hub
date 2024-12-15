@@ -45,7 +45,7 @@ export default function Girl(
           </div>
         </div>
       </div>
-      <div className="mt-12">
+      <div className="mt-24">
         <h3 className="text-xl">
           Các girl xinh cùng chủ đề: {(girl.topic as TopicType).name}
         </h3>

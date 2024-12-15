@@ -6,7 +6,7 @@ export default function Links() {
   return (
     <NavbarContent className="hidden sm:flex gap-12" justify="center">
       <NavbarItem>
-        <Link color="foreground" className="font-semibold" href="#">
+        <Link color="foreground" className="font-semibold" href="/posts">
           Mới nhất
         </Link>
       </NavbarItem>

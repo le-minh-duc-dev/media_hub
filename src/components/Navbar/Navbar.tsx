@@ -10,8 +10,8 @@ import {
   NavbarMenuToggle,
   Input,
 } from "@nextui-org/react"
-import dynamic from 'next/dynamic'
-const Image = dynamic(() => import('next/image'), { ssr: false })
+import dynamic from "next/dynamic"
+const Image = dynamic(() => import("next/image"), { ssr: false })
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { useTheme } from "next-themes"
 import { IoSearchSharp } from "react-icons/io5"
@@ -35,7 +35,7 @@ export function Navbar(props: Readonly<NavbarProps>) {
     [props]
   )
   return (
-    <NavbarContext.Provider value={contextValues} >
+    <NavbarContext.Provider value={contextValues}>
       <NextNavbar
         shouldHideOnScroll
         height={100}
@@ -49,16 +49,18 @@ export function Navbar(props: Readonly<NavbarProps>) {
             className="sm:hidden"
           />
           <NavbarBrand>
-            <Image
-              src={`/assets/images/logo_${
-                theme?.includes("dark") ? "white" : "black"
-              }_sm_300.png`}
-              alt="logo"
-              width={60}
-              height={60}
-              className="hidden md:block"
-              // suppressHydrationWarning
-            />
+            <Link href="/">
+              <Image
+                src={`/assets/images/logo_${
+                  theme?.includes("dark") ? "white" : "black"
+                }_sm_300.png`}
+                alt="logo"
+                width={60}
+                height={60}
+                className="hidden md:block"
+                // suppressHydrationWarning
+              />
+            </Link>
           </NavbarBrand>
         </NavbarContent>
         <Links />
