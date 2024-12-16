@@ -1,3 +1,4 @@
+import { populateConfig } from "@/services/posts/config"
 import mongoose from "mongoose"
 const { Schema } = mongoose
 
@@ -38,12 +39,7 @@ dailyPostSchema.index({ date: 1 }, { unique: true }) // Ensures no duplicate rec
 // Middleware: Populates posts when fetching DailyPost documents
 
 const populate = {
-  path: "girl",
-  select: "_id name",
-  populate: {
-    path: "topic",
-    select: "_id name",
-  },
+  ...populateConfig
 }
 dailyPostSchema.pre("find", function () {
   this.populate({

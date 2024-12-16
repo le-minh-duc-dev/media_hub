@@ -18,10 +18,7 @@ export default async function page({
   const limit = 16
   const param = (await params).param
   // await wait(1000*1000)
-  const topics: TopicType[] = await getTopic({
-    limit: 10,
-    page,
-  })
+  const topics: TopicType[] = await getTopic({})
   const topic = topics.find((t) => t.param.includes(param))
   if (!topic) throw Error()
   const relatedGirls: GirlType[] = await getGirl({

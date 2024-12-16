@@ -8,6 +8,7 @@ const RelatedPosts = memo(function RelatedPosts(props: {
   title: string
 }) {
   const posts: PostType[] = useMemo(() => JSON.parse(props.posts), [props])
+  if (posts.length <= 0) return <></>
   return (
     <div className="">
       <h3 className="text-xl font-semibold">{props.title}</h3>

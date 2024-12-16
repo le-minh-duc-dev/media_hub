@@ -8,16 +8,16 @@ import {
   Input,
   Pagination,
 } from "@nextui-org/react"
-import { useParams, useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { IoSearchSharp } from "react-icons/io5"
 
 export default function Posts(props: { posts: string; totalPages: number }) {
   const posts: PostType[] = useMemo(() => JSON.parse(props.posts), [props])
-  const params = useParams()
-  const page = !isNaN(parseInt(params.page as string))
-    ? parseInt(params.page as string)
+  const searchParams = useSearchParams()
+  const page = !isNaN(parseInt(searchParams.get("page") ?? "1"))
+    ? parseInt(searchParams.get("page") ?? "1")
     : 1
-  const search = (params.search as string) || ""
+  const search = searchParams.get("search") ?? ""
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
   function onSubmit(e: FormEvent) {

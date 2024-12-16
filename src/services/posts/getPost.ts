@@ -1,9 +1,8 @@
 import { dbConnect } from "@/database/connect"
-import Girl from "@/database/models/Girl"
 import Post from "@/database/models/Post"
-import Topic from "@/database/models/Topic"
 import { PostSearchParams } from "@/types/posts.types"
 import { PopulateOptions } from "mongoose"
+import { populateConfig as sample } from "./config"
 
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
@@ -41,14 +40,7 @@ export async function getPost(
 
   // Define the populate configuration
   const populateConfig: PopulateOptions = {
-    path: "girl",
-    select: "_id name description",
-    model: Girl,
-    populate: {
-      path: "topic",
-      select: "_id name",
-      model: Topic,
-    },
+    ...sample,
   }
   const postList = !isFindOne
     ? await Post.find(query)

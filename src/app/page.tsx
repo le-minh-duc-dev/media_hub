@@ -8,7 +8,7 @@ import { DailyPost } from "@/types/dailyPosts.types"
 export default async function Home() {
   const posts = await getPost({ limit: 10 })
   let dailyPost: DailyPost | null = await getDailyPost(new Date())
-  console.log(dailyPost)
+
   if (!dailyPost) {
     const publicPosts = await getRandomPosts({ isPrivate: false })
     const privatePosts = await getRandomPosts({})
@@ -26,18 +26,21 @@ export default async function Home() {
   }
   if (!dailyPost) return <div>Chưa có bài viết</div>
   const post = dailyPost.privatePost ?? dailyPost.publicPost
+  console.log(post);
   return (
     <div className="grid md:grid-cols-3 gap-6 gap-x-12">
       <div className="col-span-2">
-        <Post post={JSON.stringify(post)} relatedPosts={JSON.stringify([])} />
+        <Post
+          post={JSON.stringify(post)}
+          relatedPosts={JSON.stringify([])}
+          showBreadcrumbs={false}
+        />
       </div>
       <div className="mt-12">
-        <div className="mt-12">
-          <RelatedPosts
-            posts={JSON.stringify(posts)}
-            title="Các bài viết mới nhất"
-          />
-        </div>
+        <RelatedPosts
+          posts={JSON.stringify(posts)}
+          title="Các bài viết mới nhất"
+        />
       </div>
     </div>
   )

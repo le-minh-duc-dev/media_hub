@@ -4,14 +4,14 @@ import React, { useMemo } from "react"
 import GirlItem from "./GirlItem"
 import Link from "next/link"
 import { Pagination } from "@nextui-org/react"
-import { useParams, useRouter } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 export default function GirlsWithTopic(
   props: Readonly<{ girls: string; totalPages: number; topicParam: string }>
 ) {
   const girls = useMemo<GirlType[]>(() => JSON.parse(props.girls), [props])
-  const params = useParams()
-  const page = !isNaN(parseInt(params.page as string))
-    ? parseInt(params.page as string)
+  const searchParams = useSearchParams()
+  const page = !isNaN(parseInt(searchParams.get('page')??'1'))
+    ? parseInt(searchParams.get('page')??'1')
     : 1
   const router = useRouter()
   return (
@@ -25,10 +25,10 @@ export default function GirlsWithTopic(
       </div>
       <div className="mt-12 ">
         <Pagination
-          classNames={{base:"flex justify-center"}}
+          classNames={{ base: "flex justify-center" }}
           isCompact
           showControls
-          initialPage={page}
+          page={page}
           onChange={(page) =>
             router.push(`/topics/${props.topicParam}?page=${page}`)
           }

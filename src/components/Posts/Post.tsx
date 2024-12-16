@@ -13,11 +13,17 @@ import ImagesList from "./ImagesList"
 import useScrollingDown from "@/lib/customHooks/useScrollingDown"
 import useScrollY from "@/lib/customHooks/useScrollY"
 import RelatedPosts from "./RelatedPosts"
-const Post = memo(function Post(props: { post: string; relatedPosts: string }) {
+const Post = memo(function Post({
+  showBreadcrumbs = true,
+  ...props
+}: {
+  post: string
+  relatedPosts: string
+  showBreadcrumbs?: boolean
+}) {
   const [isGridMode, setIsGridMode] = useState(false)
   const post: PostType = useMemo(() => JSON.parse(props.post), [props])
   const girl = post.girl as GirlType
-
   const isScrollingDown = useScrollingDown()
   const goToTop = useScrollY()
   return (
@@ -34,10 +40,8 @@ const Post = memo(function Post(props: { post: string; relatedPosts: string }) {
           <FaChevronCircleUp />
         </Button>
       )}
-      <PostBreadcrumbs post={post} />
-      <h1 className="text-3xl mt-12 font-semibold text-justify">
-        {post.title}
-      </h1>
+      {showBreadcrumbs && <PostBreadcrumbs post={post} />}
+      <h1 className="text-3xl mt-12 font-semibold ">{post.title}</h1>
       <div className="flex justify-between my-6">
         <p className="font-semibold text-foreground-500 text-sm ">
           Cập nhật: {formatDateTime(post.updatedAt!)}
@@ -53,7 +57,7 @@ const Post = memo(function Post(props: { post: string; relatedPosts: string }) {
         <Link href={`/girls/${girl.param}`}>
           <Chip>{girl.name}</Chip>
         </Link>
-        <Link href={`/girls/${(girl.topic as TopicType).param}`}>
+        <Link href={`/topics/${(girl.topic as TopicType).param}`}>
           <Chip>{(girl.topic as TopicType).name}</Chip>
         </Link>
       </div>
