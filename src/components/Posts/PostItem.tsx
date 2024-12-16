@@ -21,7 +21,7 @@ export default function PostItem({ post }: { post: PostType }) {
           />
 
           <div className="flex flex-col">
-            <p className="text-md line-clamp-2">{post.title}</p>
+            <p className="text-md line-clamp-2 ">{post.title}</p>
             <div
               dangerouslySetInnerHTML={{ __html: post.description }}
               className="text-small text-default-500 line-clamp-1"

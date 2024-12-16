@@ -23,4 +23,7 @@ export type PostType = {
   body: PostBodyItem[]
   user: string | UserType
   girl: string | GirlType
+  updatedAt?:string
+  createdAt?:string
+  view:number
 }

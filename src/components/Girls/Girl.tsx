@@ -21,11 +21,11 @@ export default function Girl(
     () => JSON.parse(props.relatedPosts),
     [props]
   )
-  console.log(girl)
+  console.log(relatedPosts.length)
   return (
     <div>
       <Breadcrumbs>
-        <BreadcrumbItem href="/">Home</BreadcrumbItem>
+        <BreadcrumbItem href="/">Trang chủ</BreadcrumbItem>
         <BreadcrumbItem href={`/topics/${(girl.topic as TopicType).param}`}>
           {(girl.topic as TopicType).name}
         </BreadcrumbItem>
@@ -36,14 +36,18 @@ export default function Girl(
       <div className="grid lg:grid-cols-2 gap-12 mt-16">
         <Bio girl={girl} />
         <div className="border border-foreground/15 rounded-lg p-6 max-h-[75vh] overflow-y-auto">
-          <h2 className="text-xl font-semibold mb-6">
-            Các bài viết của {girl.name}
-          </h2>
-          <div className="flex gap-4 flex-wrap ">
-            {relatedPosts.map((post) => (
-              <PostItem post={post} key={post._id as string} />
-            ))}
-          </div>
+          {relatedPosts.length > 0 ? (
+            <>
+              <h2 className="text-xl font-semibold mb-6">
+                Các bài viết của {girl.name}
+              </h2>
+              <div className="flex gap-4 flex-wrap max-h-full min-h-0 overflow-y-auto">
+                {relatedPosts.map((post) => (
+                  <PostItem post={post} key={post._id as string} />
+                ))}
+              </div>
+            </>
+          ): <div className="flex justify-center items-center h-full">Chưa có bài viết.</div>}
         </div>
       </div>
       <div className="mt-24">

@@ -1,8 +1,13 @@
 "use client"
 import { PostType } from "@/types/posts.types"
-import React, { FormEvent, useMemo, useRef } from "react"
+import React, { ChangeEvent, FormEvent, useMemo, useRef } from "react"
 import PostItem from "./PostItem"
-import { Input, Pagination } from "@nextui-org/react"
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Input,
+  Pagination,
+} from "@nextui-org/react"
 import { useParams, useRouter } from "next/navigation"
 import { IoSearchSharp } from "react-icons/io5"
 
@@ -14,7 +19,6 @@ export default function Posts(props: { posts: string; totalPages: number }) {
     : 1
   const search = (params.search as string) || ""
   const router = useRouter()
-
   const inputRef = useRef<HTMLInputElement>(null)
   function onSubmit(e: FormEvent) {
     e.preventDefault()
@@ -22,7 +26,11 @@ export default function Posts(props: { posts: string; totalPages: number }) {
   }
   return (
     <div className=" mt-12">
-      <h1 className="text-3xl font-semibold">Tất cả bài viết</h1>
+      <Breadcrumbs>
+        <BreadcrumbItem href="/">Trang chủ</BreadcrumbItem>
+        <BreadcrumbItem href={`/posts}`}>Tất cả bài viết</BreadcrumbItem>
+      </Breadcrumbs>
+      <h1 className="text-3xl font-semibold mt-12">Tất cả bài viết</h1>
       <div className="max-w-96 my-12">
         <form onSubmit={onSubmit}>
           <Input
@@ -52,6 +60,13 @@ export default function Posts(props: { posts: string; totalPages: number }) {
             label="Search"
             placeholder="Type to search..."
             radius="lg"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              if (e.target.value == "") {
+                router.push(
+                  `/posts?page=${page}&search=${inputRef.current!.value}`
+                )
+              }
+            }}
             startContent={<IoSearchSharp />}
           />
         </form>

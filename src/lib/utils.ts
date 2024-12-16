@@ -235,16 +235,17 @@ export function formatYearMonthDay(dateString) {
   }
 }
 
-export function isRegExpString(str) {
+export function isRegExpString(str:string) {
   try {
     new RegExp(str)
     return true
   } catch (error) {
+    console.log(error);
     return false
   }
 }
 
-export function formatView(viewCount) {
+export function formatView(viewCount:number) {
   if (viewCount >= 1000)
     return (viewCount / 1000).toFixed(1).replace(".", ",") + " N"
   else if (viewCount >= 1000000)
