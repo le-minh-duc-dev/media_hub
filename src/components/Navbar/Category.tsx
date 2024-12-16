@@ -77,12 +77,17 @@ export default function Category({
                 <Link
                   href={`/topics/${topic.param}`}
                   className="font-semibold hover:underline cursor-pointer mb-4 block"
+                  onClick={() => setIsOpen(false)}
                 >
                   {topic.name}
                 </Link>
                 <ul className="flex flex-col gap-4 ">
                   {girlsPerTopic[topic._id as string].map((girl) => (
-                    <NavGirlItem key={girl._id as string} girl={girl} closePopover={()=>setIsOpen(false)}/>
+                    <NavGirlItem
+                      key={girl._id as string}
+                      girl={girl}
+                      closePopover={() => setIsOpen(false)}
+                    />
                   ))}
                 </ul>
               </div>
@@ -93,7 +98,10 @@ export default function Category({
     </Popover>
   )
 }
-function NavGirlItem({ girl,closePopover }: Readonly<{ girl: GirlType,closePopover:()=>void }>) {
+function NavGirlItem({
+  girl,
+  closePopover,
+}: Readonly<{ girl: GirlType; closePopover: () => void }>) {
   return (
     <Link href={`/girls/${girl.param}`} onClick={closePopover}>
       <Tooltip content={<GirlItem girl={girl} />} delay={500}>
