@@ -28,6 +28,7 @@ export const NavbarContext = React.createContext<NavbarContextType>({
 })
 export function Navbar(props: Readonly<NavbarProps>) {
   const { data: session } = useSession()
+  console.log(session);
   const isLogined = session?.user != null
   const [isMenuOpen] = React.useState(false)
   const { theme } = useTheme()
