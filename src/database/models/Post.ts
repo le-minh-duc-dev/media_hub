@@ -5,6 +5,8 @@ const postItem = new Schema({
   description: { type: String, index: true },
 })
 
+postItem.index({ description: "text" })
+
 const postSchema = new Schema(
   {
     user: {
@@ -12,7 +14,7 @@ const postSchema = new Schema(
       ref: "User",
       required: true,
     },
-    title: { type: String, index: true },
+    title: { type: String },
     description: { type: String },
     param: { type: String, index: true, unique: true },
     girl: {
@@ -29,5 +31,5 @@ const postSchema = new Schema(
     timestamps: true,
   }
 )
-
+postSchema.index({ title: "text", description: "text" })
 export default mongoose.models.Post || mongoose.model("Post", postSchema)

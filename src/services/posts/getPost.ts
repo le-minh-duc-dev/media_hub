@@ -50,8 +50,6 @@ export async function getPost(
       model: Topic,
     },
   }
-  
-
   const postList = !isFindOne
     ? await Post.find(query)
         .sort({ updatedAt: validatedSort })
