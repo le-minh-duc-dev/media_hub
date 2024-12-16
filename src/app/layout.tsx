@@ -15,10 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen relative">
+      <body className="min-h-screen">
         <Providers>
           <NavbarWrapper />
-          <main className="max-w-7xl container mx-auto px-6">{children}</main>
+          <main className="relative max-w-7xl container mx-auto px-6">{children}</main>
         </Providers>
       </body>
     </html>

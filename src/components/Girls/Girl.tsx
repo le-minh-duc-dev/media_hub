@@ -8,6 +8,7 @@ import PostItem from "../Posts/PostItem"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react"
 import { TopicType } from "@/types/topics.types"
 import GirlItem from "../Topics/GirlItem"
+import Link from "next/link"
 export default function Girl(
   props: Readonly<{ girl: string; relatedPosts: string; relatedGirls: string }>
 ) {
@@ -20,7 +21,7 @@ export default function Girl(
     () => JSON.parse(props.relatedPosts),
     [props]
   )
-
+  console.log(girl)
   return (
     <div>
       <Breadcrumbs>
@@ -51,7 +52,9 @@ export default function Girl(
         </h3>
         <div className="flex gap-4 flex-wrap mt-8">
           {relatedGirls.map((girl) => (
-            <GirlItem girl={girl} key={girl._id as string} />
+            <Link href={`/girls/${girl.param}`} key={girl._id as string}>
+              <GirlItem girl={girl} />
+            </Link>
           ))}
         </div>
       </div>

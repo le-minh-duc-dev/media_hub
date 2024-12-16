@@ -1,6 +1,6 @@
 import Topic from "@/components/Topics/Topic"
-import TopicsMenu from "@/components/Topics/TopicsMenu"
-import { getGirl } from "@/services/girls"
+// import wait from "@/lib/simulateNetwork"
+import { countGirlList, getGirl } from "@/services/girls"
 import { getTopic } from "@/services/topics"
 import { GirlType } from "@/types/girls.types"
 import { TopicType } from "@/types/topics.types"
@@ -13,25 +13,31 @@ export default async function page({
   params: Promise<{ param: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const page = ((await searchParams).page as string) || "1"
+  const parsedPage = parseInt((await searchParams).page as string)
+  const page = !isNaN(parsedPage) ? parsedPage : 1
+  const limit = 16
   const param = (await params).param
+  // await wait(1000*1000)
   const topics: TopicType[] = await getTopic({
     limit: 10,
-    page: parseInt(page),
+    page,
   })
   const topic = topics.find((t) => t.param.includes(param))
   if (!topic) throw Error()
   const relatedGirls: GirlType[] = await getGirl({
     topic: topic._id.toString(),
+    page,
+    limit,
   })
+  const totalGirls = await countGirlList({ topic: topic._id.toString() })
+  const totalPages = Math.ceil(totalGirls / limit)
+
   return (
-    <div className="mt-12">
-      <div className="grid grid-cols-4">
-        <TopicsMenu topics={JSON.stringify(topics)} />
-        <div className="col-span-3">
-          <Topic girls={JSON.stringify(relatedGirls)} />
-        </div>
-      </div>
-    </div>
+    <Topic
+      topicParam={topic.param}
+      topics={topics}
+      relatedGirls={relatedGirls}
+      totalPages={totalPages}
+    />
   )
 }

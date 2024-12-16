@@ -35,7 +35,7 @@ export async function getGirl(
 
   const populateConfig: PopulateOptions = {
     path: "topic",
-    select: "_id name",
+    select: "_id name param",
     model: Topic,
   }
   

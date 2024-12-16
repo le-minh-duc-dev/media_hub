@@ -4,29 +4,33 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-export async function getData(url) {
+export async function getData(url: string) {
   const res = await fetch(url)
   const data = await res.json()
   return data
 }
 
-export function getTypeFileOfUrl(url) {
-  const ext = url.split(".").pop().toLowerCase()
-  // Video file extensions
-  if (["mp4", "mov", "avi", "mkv"].includes(ext)) {
-    return "video"
-  }
-  // Image file extensions
-  else if (
-    ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "webp"].includes(ext)
-  ) {
-    return "image"
+export function getTypeFileOfUrl(url: string) {
+  let ext: string | string[] | undefined = url.split(".")
+
+  ext = ext.pop()?.toLowerCase()
+  if (ext) {
+    // Video file extensions
+    if (["mp4", "mov", "avi", "mkv"].includes(ext)) {
+      return "video"
+    }
+    // Image file extensions
+    else if (
+      ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "webp"].includes(ext)
+    ) {
+      return "image"
+    }
   }
 
   return "unknown"
 }
 
-export function extractIframeContent(html:string) {
+export function extractIframeContent(html: string) {
   // Define the regular expression to match the content inside <iframe>...</iframe>
   const regex = /<iframe[^>]*>.*?<\/iframe>/
 
@@ -42,7 +46,7 @@ export function extractIframeContent(html:string) {
   return ""
 }
 
-export function normalizeHTMLString(htmlString:string) {
+export function normalizeHTMLString(htmlString: string) {
   // Replace encoded characters with their corresponding symbols
   const normalizedHTML = htmlString
     .replace(/&lt;/g, "<")
@@ -51,7 +55,7 @@ export function normalizeHTMLString(htmlString:string) {
 
   return normalizedHTML
 }
-export function formatDateTime(rawDateTime:string) {
+export function formatDateTime(rawDateTime: string) {
   const dateObj = new Date(rawDateTime)
   const hours = dateObj.getUTCHours().toString().padStart(2, "0")
   const minutes = dateObj.getUTCMinutes().toString().padStart(2, "0")
@@ -62,7 +66,7 @@ export function formatDateTime(rawDateTime:string) {
   return `${hours}:${minutes} ${day}/${month}/${year}`
 }
 
-function removeHtmlTags(text:string) {
+function removeHtmlTags(text: string) {
   // Define the regex pattern to match HTML tags
   const pattern = /<[^>]*>/g
 
@@ -74,7 +78,7 @@ function removeHtmlTags(text:string) {
 
 export { removeHtmlTags }
 
-export function reviewParagraph(paragraph:string, lineNumber = 2) {
+export function reviewParagraph(paragraph: string, lineNumber = 2) {
   if (!paragraph) return ""
 
   const sentenceList = removeHtmlTags(paragraph).split(".")
@@ -83,7 +87,7 @@ export function reviewParagraph(paragraph:string, lineNumber = 2) {
   else return sentenceList[0]
 }
 
-export function extractPublicId(cloudinarySecureUrl:string) {
+export function extractPublicId(cloudinarySecureUrl: string) {
   if (!cloudinarySecureUrl) return ""
   const parts = cloudinarySecureUrl.split("/")
   if (parts.length < 2) return ""
@@ -93,7 +97,7 @@ export function extractPublicId(cloudinarySecureUrl:string) {
   return extractedPart
 }
 
-export function compareTags(tagA:string, tagB:string) {
+export function compareTags(tagA: string, tagB: string) {
   // console.log("tagA", tagA, "tagB", tagB)
   if (tagA) tagA = tagA.toLowerCase()
   if (tagB) tagB = tagB.toLowerCase()
@@ -113,7 +117,7 @@ export function compareTags(tagA:string, tagB:string) {
 //   }
 // }
 
-export function convertUpdatedPostValuesToFormData(id:string, values) {
+export function convertUpdatedPostValuesToFormData(id: string, values) {
   const formData = new FormData()
   formData.append("id", id)
   formData.append("title", values.title)
@@ -274,6 +278,6 @@ export function setThemeAuto() {
     localStorage.setItem("theme", "light")
   }
 }
-export function getRandomViewCount(max=20000) {
+export function getRandomViewCount(max = 20000) {
   return Math.floor(Math.random() * max + 5000)
 }
