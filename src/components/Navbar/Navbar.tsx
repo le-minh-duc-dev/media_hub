@@ -20,11 +20,15 @@ import Links from "./Links"
 import { NavbarContextType, NavbarProps } from "@/types/navbar.types"
 import { TopicType } from "@/types/topics.types"
 import { GirlType } from "@/types/girls.types"
+import { useSession } from "next-auth/react"
+import { SignOut } from "../SignOut"
 export const NavbarContext = React.createContext<NavbarContextType>({
   topics: [],
   girls: [],
 })
 export function Navbar(props: Readonly<NavbarProps>) {
+  const { data: session } = useSession()
+  const isLogined = session?.user != null
   const [isMenuOpen] = React.useState(false)
   const { theme } = useTheme()
   const contextValues = React.useMemo(
@@ -100,6 +104,7 @@ export function Navbar(props: Readonly<NavbarProps>) {
             type="search"
           />
           <ThemeSwitcher />
+          {isLogined ? <SignOut /> : <Link href="/login" className="underline text-foreground-50">Login</Link>}
         </NavbarContent>
         <NavbarMenu>
           {contextValues.topics.map((item) => (
