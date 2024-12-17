@@ -3,18 +3,18 @@
 import { Color } from "@tiptap/extension-color"
 import { EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import React from "react"
+import React, { memo } from "react"
 import MenuBar from "./MenuBar"
 import { useTheme } from "next-themes"
 
 const extensions = [Color, StarterKit]
 
-export default function TiptapEditor({
+const TiptapEditor = memo(function TiptapEditor({
   initialContent = "",
   onChange = () => {},
 }: {
   initialContent: string
-  onChange: (value: string) => void
+  onChange?: (value: string) => void
 }) {
   const { theme } = useTheme()
   const editorProps = {
@@ -42,4 +42,6 @@ export default function TiptapEditor({
       </div>
     </div>
   )
-}
+})
+
+export default TiptapEditor
