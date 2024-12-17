@@ -1,19 +1,11 @@
-import NextAuth, { type DefaultSession } from "next-auth"
+import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import GitHub from "next-auth/providers/github"
 import { dbConnect } from "../database/connect"
 import { createUser, getUserByEmail } from "../services/users"
 import { UserType } from "../types/users.types"
 import { Role } from "./helper"
-declare module "next-auth" {
-  interface Session {
-    user: {
-      role: string
-      url: string
-      canAccessVipContent: boolean
-    } & DefaultSession["user"]
-  }
-}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google, GitHub],
 
@@ -43,11 +35,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.name = user.name
       session.user.url = user.url
       session.user.role = user.role
-      session.user.canAccessVipContent =  user.role == Role.Vip || user.role == Role.Admin
+      session.user.canAccessVipContent =
+        user.role == Role.Vip || user.role == Role.Admin
+      session.user.canUpdateContent = user.role == Role.Admin
       return session
     },
     // async jwt({ token, user, account, profile, isNewUser }) {
     //   return token
+    // },
+
+    // authorized({ auth, request: { nextUrl } }) {
+    //   const isLoggedIn = auth?.user !=undefined
+    //   console.log("middleware");
+    //   if (!isLoggedIn && nextUrl.pathname !== "/login") {
+    //     const newUrl = new URL("/login", nextUrl.origin)
+    //     return Response.redirect(newUrl)
+    //   }
+    //   return true
     // },
   },
 })

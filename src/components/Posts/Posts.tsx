@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { IoSearchSharp } from "react-icons/io5"
+import Link from "next/link"
 
 export default function Posts(props: { posts: string; totalPages: number }) {
   const posts: PostType[] = useMemo(() => JSON.parse(props.posts), [props])
@@ -27,8 +28,12 @@ export default function Posts(props: { posts: string; totalPages: number }) {
   return (
     <div className=" mt-12">
       <Breadcrumbs>
-        <BreadcrumbItem href="/">Trang chủ</BreadcrumbItem>
-        <BreadcrumbItem href={`/posts}`}>Tất cả bài viết</BreadcrumbItem>
+        <BreadcrumbItem>
+          <Link href="/">Trang chủ</Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <Link href={`/posts}`}>Tất cả bài viết</Link>
+        </BreadcrumbItem>
       </Breadcrumbs>
       <h1 className="text-3xl font-semibold mt-12">Tất cả bài viết</h1>
       <div className="max-w-96 my-12">
