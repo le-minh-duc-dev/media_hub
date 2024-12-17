@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 const { Schema } = mongoose
 const postItem = new Schema({
   url: String,
-  description: { type: String, index: true },
+  description: { type: String, index: true ,default:""},
 })
 
 postItem.index({ description: "text" })

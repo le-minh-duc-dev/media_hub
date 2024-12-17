@@ -10,12 +10,15 @@ export interface PostSearchParams {
   isPrivate?: boolean
   girl?: string
 }
+
 export type PostBodyItem = {
   url: string
-  description: string
+  description?: string
+  file?: File
+  id?:string
 }
-export type PostType = {
-  _id: string | ObjectId
+export interface PostType {
+  _id?: string | ObjectId
   title: string
   param: string
   description: string
@@ -23,7 +26,7 @@ export type PostType = {
   body: PostBodyItem[]
   user: string | UserType
   girl: string | GirlType
-  updatedAt?:string
-  createdAt?:string
-  view:number
+  updatedAt?: string
+  createdAt?: string
+  view: number
 }

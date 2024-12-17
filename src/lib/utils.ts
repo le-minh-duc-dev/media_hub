@@ -1,9 +1,13 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+export function getFileType(mimeType: string) {
+  if (mimeType.startsWith("image/")) {
+    return "image"
+  } else if (mimeType.startsWith("video/")) {
+    return "video"
+  } else {
+    return "unknown"
+  }
 }
+
 export async function getData(url: string) {
   const res = await fetch(url)
   const data = await res.json()
@@ -235,17 +239,17 @@ export function formatYearMonthDay(dateString) {
   }
 }
 
-export function isRegExpString(str:string) {
+export function isRegExpString(str: string) {
   try {
     new RegExp(str)
     return true
   } catch (error) {
-    console.log(error);
+    console.log(error)
     return false
   }
 }
 
-export function formatView(viewCount:number) {
+export function formatView(viewCount: number) {
   if (viewCount >= 1000)
     return (viewCount / 1000).toFixed(1).replace(".", ",") + " N"
   else if (viewCount >= 1000000)

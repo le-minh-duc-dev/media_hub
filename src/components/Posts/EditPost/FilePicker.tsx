@@ -1,12 +1,13 @@
 import React, { useId } from "react"
 import { FaPlus } from "react-icons/fa"
-
+import { LocalFile } from "./EditPost"
+import { v4 as uuidv4 } from "uuid"
 export default function FilePicker({
   onPick,
   allowedTypes = ["image/png", "image/jpeg", "video/mp4"],
   maxSizeMB = 100,
 }: Readonly<{
-  onPick: (file: File[]) => void
+  onPick: (localfiles: LocalFile[]) => void
   allowedTypes?: string[]
   maxSizeMB?: number
 }>) {
@@ -16,7 +17,7 @@ export default function FilePicker({
     const files = event.target.files
     if (!files) return
 
-    const validFiles: File[] = []
+    const validFiles: LocalFile[] = []
     const maxSizeBytes = maxSizeMB * 1024 * 1024
 
     Array.from(files).forEach((file) => {
@@ -24,7 +25,7 @@ export default function FilePicker({
         allowedTypes.includes(file.type) && // Check MIME type
         file.size <= maxSizeBytes // Check file size
       ) {
-        validFiles.push(file)
+        validFiles.push({ file, id: uuidv4() })
       } else {
         console.warn(
           `File "${file.name}" is invalid. Allowed types: ${allowedTypes.join(

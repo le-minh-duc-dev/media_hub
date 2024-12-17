@@ -29,7 +29,7 @@ const TiptapEditor = memo(function TiptapEditor({
     extensions,
     content: initialContent,
     editorProps,
-
+    immediatelyRender:false,
     onUpdate({ editor }) {
       onChange(editor.getHTML())
     },
