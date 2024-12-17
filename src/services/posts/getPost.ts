@@ -3,12 +3,24 @@ import Post from "@/database/models/Post"
 import { PostSearchParams } from "@/types/posts.types"
 import { PopulateOptions } from "mongoose"
 import { populateConfig as sample } from "./config"
+import { unstable_cache } from "next/cache"
+
+export const GET_POST_TAG = "posts"
 
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = -1 // Ascending
 
-export async function getPost(
+export function getPost(
+  searchParams: PostSearchParams = {},
+  isFindOne = false
+) {
+  return unstable_cache(getNoCachePost, [], {
+    tags: [GET_POST_TAG],
+  })(searchParams, isFindOne)
+}
+
+export async function getNoCachePost(
   {
     param,
     girl,
@@ -53,6 +65,7 @@ export function getOnlyPublicPost(
   isFindOne = false
 ) {
   searchParams.isPrivate = false
+
   return getPost(searchParams, isFindOne)
 }
 

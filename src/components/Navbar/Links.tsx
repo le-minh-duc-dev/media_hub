@@ -1,12 +1,13 @@
-import { Link, NavbarContent, NavbarItem } from "@nextui-org/react"
+import {  NavbarContent, NavbarItem } from "@nextui-org/react"
 import Category from "./Category"
 import { hotGirlTopics, socialTopics } from "./categories"
+import Link from "next/link"
 
 export default function Links() {
   return (
     <NavbarContent className="hidden sm:flex gap-12" justify="center">
       <NavbarItem>
-        <Link color="foreground" className="font-semibold" href="/posts">
+        <Link className="font-semibold" href="/posts">
           Mới nhất
         </Link>
       </NavbarItem>

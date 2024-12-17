@@ -3,10 +3,24 @@ import { GirlSearchParams } from "@/types/girls.types"
 import Girl from "@/database/models/Girl"
 import Topic from "@/database/models/Topic"
 import { PopulateOptions } from "mongoose"
+import { unstable_cache } from "next/cache"
+
+export const GET_GIRL_TAG = "GET_GIRL_TAG"
+
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = -1 // Ascending
-export async function getGirl(
+
+export function getGirl(
+  searchParams: GirlSearchParams = {},
+  isFindOne = false
+) {
+  return unstable_cache(getGirlNoCache, [], {
+    tags: [GET_GIRL_TAG],
+  })(searchParams, isFindOne)
+}
+
+export async function getGirlNoCache(
   searchParams: GirlSearchParams = {},
   isFindOne = false
 ) {

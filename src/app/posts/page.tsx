@@ -1,9 +1,9 @@
 import { auth } from "@/authentication/auth"
 import Posts from "@/components/Posts/Posts"
-import { getOnlyPublicPost, getPost } from "@/services/posts"
-import countPostList, {
+import { countPostList, getOnlyPublicPost, getPost } from "@/services/posts"
+import  {
   countOnlyPublicPostList,
-} from "@/services/posts/countPostList"
+} from "@/services/posts/index"
 import React from "react"
 
 export default async function page({

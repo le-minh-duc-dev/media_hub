@@ -2,12 +2,24 @@ import { dbConnect } from "@/database/connect"
 
 import Topic from "@/database/models/Topic"
 import { TopicSearchParams } from "@/types/topics.types"
+import { unstable_cache } from "next/cache"
+
+export const GET_TOPIC_TAG = "GET_TOPIC_TAG"
 
 const DEFAULT_LIMIT = 1000
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = -1 // Ascending
 
-export async function getTopic(
+export function getTopic(
+  searchParams: TopicSearchParams = {},
+  isFindOne = false
+) {
+  return unstable_cache(getTopicNoCache, [], {
+    tags: [GET_TOPIC_TAG],
+  })(searchParams, isFindOne)
+}
+
+export async function getTopicNoCache(
   searchParams: TopicSearchParams = {},
   isFindOne = false
 ) {

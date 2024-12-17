@@ -25,12 +25,16 @@ export default function Girl(
   return (
     <div>
       <Breadcrumbs>
-        <BreadcrumbItem href="/">Trang chủ</BreadcrumbItem>
-        <BreadcrumbItem href={`/topics/${(girl.topic as TopicType).param}`}>
-          {(girl.topic as TopicType).name}
+        <BreadcrumbItem>
+          <Link href="/">Trang chủ</Link>
         </BreadcrumbItem>
-        <BreadcrumbItem href={`/girls/${girl.param}`}>
-          {girl.name}
+        <BreadcrumbItem>
+          <Link href={`/topics/${(girl.topic as TopicType).param}`}>
+            {(girl.topic as TopicType).name}
+          </Link>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <Link href={`/girls/${girl.param}`}>{girl.name}</Link>
         </BreadcrumbItem>
       </Breadcrumbs>
       <div className="grid lg:grid-cols-2 gap-12 mt-16">
@@ -47,7 +51,11 @@ export default function Girl(
                 ))}
               </div>
             </>
-          ): <div className="flex justify-center items-center h-full">Chưa có bài viết.</div>}
+          ) : (
+            <div className="flex justify-center items-center h-full">
+              Chưa có bài viết.
+            </div>
+          )}
         </div>
       </div>
       <div className="mt-24">

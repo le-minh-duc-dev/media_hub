@@ -1,6 +1,7 @@
 "use client"
 import { TopicType } from "@/types/topics.types"
 import { BreadcrumbItem, Breadcrumbs } from "@nextui-org/react"
+import Link from "next/link"
 import { useParams } from "next/navigation"
 import React, { useMemo } from "react"
 
@@ -13,11 +14,15 @@ export default function TopicBreadcrumbs(props: { topics: string }) {
   )
   return (
     <Breadcrumbs>
-      <BreadcrumbItem href="/">Trang chủ</BreadcrumbItem>
-      <BreadcrumbItem href={`/topics`}>Thể loại</BreadcrumbItem>
+      <BreadcrumbItem>
+        <Link href="/">Trang chủ</Link>
+      </BreadcrumbItem>
+      <BreadcrumbItem>
+        <Link href={`/topics`}>Thể loại</Link>
+      </BreadcrumbItem>
       {topic != null && (
-        <BreadcrumbItem href={`/topics/${topic.param}`}>
-          {topic.name}
+        <BreadcrumbItem>
+          <Link href={`/topics/${topic.param}`}>{topic.name}</Link>
         </BreadcrumbItem>
       )}
     </Breadcrumbs>
