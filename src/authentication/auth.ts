@@ -1,28 +1,21 @@
 import NextAuth, { type DefaultSession } from "next-auth"
 import Google from "next-auth/providers/google"
 import GitHub from "next-auth/providers/github"
-import { dbConnect } from "./database/connect"
-import { createUser, getUserByEmail } from "./services/users"
-import { UserType } from "./types/users.types"
-
+import { dbConnect } from "../database/connect"
+import { createUser, getUserByEmail } from "../services/users"
+import { UserType } from "../types/users.types"
+import { Role } from "./helper"
 declare module "next-auth" {
   interface Session {
     user: {
       role: string
       url: string
+      canAccessVipContent: boolean
     } & DefaultSession["user"]
   }
 }
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    Google({
-      profile(profile) {
-        // console.log(profile);
-        return { role: profile.role ?? "user", ...profile }
-      },
-    }),
-    GitHub,
-  ],
+  providers: [Google, GitHub],
 
   callbacks: {
     async signIn({ profile }) {
@@ -50,6 +43,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.name = user.name
       session.user.url = user.url
       session.user.role = user.role
+      session.user.canAccessVipContent =  user.role == Role.Vip || user.role == Role.Admin
       return session
     },
     // async jwt({ token, user, account, profile, isNewUser }) {

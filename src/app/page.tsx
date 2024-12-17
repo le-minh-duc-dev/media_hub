@@ -1,12 +1,16 @@
+import { auth } from "@/authentication/auth"
 import Post from "@/components/Posts/Post"
 import RelatedPosts from "@/components/Posts/RelatedPosts"
 import { createDailyPost, getDailyPost } from "@/services/dailyPosts"
-import { getPost } from "@/services/posts"
+import { getOnlyPublicPost, getPost } from "@/services/posts"
 import getRandomPosts from "@/services/posts/getRandomPosts"
 import { DailyPost } from "@/types/dailyPosts.types"
 
 export default async function Home() {
-  const posts = await getPost({ limit: 10 })
+  const session = await auth()
+  const posts = session?.user.canAccessVipContent
+    ? await getPost({ limit: 10 })
+    : await getOnlyPublicPost({ limit: 10 })
   let dailyPost: DailyPost | null = await getDailyPost(new Date())
 
   if (!dailyPost) {
@@ -25,8 +29,9 @@ export default async function Home() {
     dailyPost = await getDailyPost(new Date())
   }
   if (!dailyPost) return <div>Chưa có bài viết</div>
-  const post = dailyPost.privatePost ?? dailyPost.publicPost
-  console.log(post);
+  const post = session?.user.canAccessVipContent
+    ? dailyPost.privatePost
+    : dailyPost.publicPost
   return (
     <div className="grid md:grid-cols-3 gap-6 gap-x-12">
       <div className="col-span-2">

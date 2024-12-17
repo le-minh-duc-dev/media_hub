@@ -1,4 +1,4 @@
-import { signIn } from "@/auth"
+import { signIn } from "@/authentication/auth"
 import Login from "@/components/Login"
 
 export default function SignIn() {

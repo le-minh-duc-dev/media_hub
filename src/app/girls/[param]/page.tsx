@@ -1,6 +1,7 @@
+import { auth } from "@/authentication/auth"
 import Girl from "@/components/Girls/Girl"
-import { getGirl } from "@/services/girls"
-import { getPost } from "@/services/posts"
+import { getGirl, getOnlyPublicGirl } from "@/services/girls"
+import { getOnlyPublicPost, getPost } from "@/services/posts"
 import { GirlType } from "@/types/girls.types"
 import { TopicType } from "@/types/topics.types"
 
@@ -9,12 +10,22 @@ export default async function Page({
 }: {
   params: Promise<{ param: string }>
 }) {
+  const session = await auth()
   const param = (await params).param
-  const girl: GirlType = await getGirl({ param }, true)
-  const relatedGirls: GirlType[] = await getGirl({
-    topic: (girl.topic as TopicType)._id.toString() ,
-  })
-  const relatedPosts = await getPost({ girl: girl._id as string })
+  const girl: GirlType = session?.user.canAccessVipContent
+    ? await getGirl({ param }, true)
+    : await getOnlyPublicGirl({ param }, true)
+  console.log( session?.user.canAccessVipContent,girl);
+  const relatedGirls: GirlType[] = session?.user.canAccessVipContent
+    ? await getGirl({
+        topic: (girl.topic as TopicType)._id.toString(),
+      })
+    : await getOnlyPublicGirl({
+        topic: (girl.topic as TopicType)._id.toString(),
+      })
+  const relatedPosts = session?.user.canAccessVipContent
+    ? await getPost({ girl: girl._id as string })
+    : await getOnlyPublicPost({ girl: girl._id as string })
   return (
     <Girl
       girl={JSON.stringify(girl)}

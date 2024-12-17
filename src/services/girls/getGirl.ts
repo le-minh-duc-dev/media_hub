@@ -21,7 +21,7 @@ export async function getGirl(
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
   } = searchParams
-  console.log(topic);
+  console.log(topic)
   let query: Record<string, unknown> = {}
   if (param) query.param = param
   if (topic) query.topic = topic
@@ -38,7 +38,7 @@ export async function getGirl(
     select: "_id name param",
     model: Topic,
   }
-  
+
   const girlList = !isFindOne
     ? await Girl.find(query)
         .sort({ updatedAt: validatedSort })
@@ -48,4 +48,20 @@ export async function getGirl(
     : await Girl.findOne(query).populate(populateConfig)
 
   return girlList
+}
+
+export function getOnlyPublicGirl(
+  searchParams: GirlSearchParams = {},
+  isFindOne = false
+) {
+  searchParams.isPrivate = false
+  return getGirl(searchParams, isFindOne)
+}
+
+export function getOnlyPrivateGirl(
+  searchParams: GirlSearchParams = {},
+  isFindOne = false
+) {
+  searchParams.isPrivate = true
+  return getGirl(searchParams, isFindOne)
 }

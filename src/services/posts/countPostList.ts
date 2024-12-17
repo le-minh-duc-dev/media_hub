@@ -17,3 +17,13 @@ async function countPostList(searchParams: PostSearchParams = {}) {
   const count = await Post.countDocuments(query)
   return count
 }
+
+export  function countOnlyPublicPostList(searchParams: PostSearchParams = {}) {
+  searchParams.isPrivate = false
+  return countPostList(searchParams)
+}
+
+export  function countOnlyPrivatePostList(searchParams: PostSearchParams = {}) {
+  searchParams.isPrivate = true
+  return countPostList(searchParams)
+}

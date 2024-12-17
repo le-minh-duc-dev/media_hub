@@ -9,14 +9,7 @@ const DEFAULT_PAGE = 1
 const DEFAULT_SORT = -1 // Ascending
 
 export async function getPost(
-  searchParams: PostSearchParams = {},
-  isFindOne = false
-) {
-  // Connect to the database
-  await dbConnect()
-
-  // Extract search parameters with default values
-  const {
+  {
     param,
     girl,
     isPrivate,
@@ -24,8 +17,10 @@ export async function getPost(
     limit = DEFAULT_LIMIT,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
-  } = searchParams
-
+  }: PostSearchParams = {},
+  isFindOne = false
+) {
+  await dbConnect()
   // Construct the query object
   let query: Record<string, unknown> = {}
   if (param) query.param = param
@@ -51,4 +46,20 @@ export async function getPost(
     : await Post.findOne(query).populate(populateConfig)
 
   return postList
+}
+
+export function getOnlyPublicPost(
+  searchParams: PostSearchParams = {},
+  isFindOne = false
+) {
+  searchParams.isPrivate = false
+  return getPost(searchParams, isFindOne)
+}
+
+export function getOnlyPrivatePost(
+  searchParams: PostSearchParams = {},
+  isFindOne = false
+) {
+  searchParams.isPrivate = true
+  return getPost(searchParams, isFindOne)
 }

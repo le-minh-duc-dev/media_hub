@@ -1,6 +1,12 @@
+import { auth } from "@/authentication/auth"
 import Topic from "@/components/Topics/Topic"
 // import wait from "@/lib/simulateNetwork"
-import { countGirlList, getGirl } from "@/services/girls"
+import {
+  countGirlList,
+  countOnlyPublicGirlList,
+  getGirl,
+  getOnlyPublicGirl,
+} from "@/services/girls"
 import { getTopic } from "@/services/topics"
 import { GirlType } from "@/types/girls.types"
 import { TopicType } from "@/types/topics.types"
@@ -13,6 +19,7 @@ export default async function page({
   params: Promise<{ param: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
+  const session = await auth()
   const parsedPage = parseInt((await searchParams).page as string)
   const page = !isNaN(parsedPage) ? parsedPage : 1
   const limit = 16
@@ -21,12 +28,20 @@ export default async function page({
   const topics: TopicType[] = await getTopic({})
   const topic = topics.find((t) => t.param.includes(param))
   if (!topic) throw Error()
-  const relatedGirls: GirlType[] = await getGirl({
-    topic: topic._id.toString(),
-    page,
-    limit,
-  })
-  const totalGirls = await countGirlList({ topic: topic._id.toString() })
+  const relatedGirls: GirlType[] = session?.user.canAccessVipContent
+    ? await getGirl({
+        topic: topic._id.toString(),
+        page,
+        limit,
+      })
+    : await getOnlyPublicGirl({
+        topic: topic._id.toString(),
+        page,
+        limit,
+      })
+  const totalGirls = session?.user.canAccessVipContent
+    ? await countGirlList({ topic: topic._id.toString() })
+    : await countOnlyPublicGirlList({ topic: topic._id.toString() })
   const totalPages = Math.ceil(totalGirls / limit)
 
   return (

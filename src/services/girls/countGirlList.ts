@@ -17,3 +17,13 @@ export async function countGirlList(searchParams: GirlSearchParams = {}) {
   const count = await Girl.countDocuments(query)
   return count
 }
+
+export function countOnlyPublicGirlList(searchParams: GirlSearchParams = {}) {
+  searchParams.isPrivate = false
+  return countGirlList(searchParams)
+}
+
+export function countOnlyPrivateGirlList(searchParams: GirlSearchParams = {}) {
+  searchParams.isPrivate = true
+  return countGirlList(searchParams)
+}
