@@ -1,9 +1,10 @@
 import { nextui } from "@nextui-org/theme"
 import type { Config } from "tailwindcss"
-
+import typography from "@tailwindcss/typography"
 export default {
   darkMode: ["class"],
   plugins: [
+    typography,
     nextui({
       prefix: "nextui", // prefix for themes variables
       addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
