@@ -1,8 +1,9 @@
 "use client"
 import { TopicType } from "@/types/topics.types"
-import {  Tab, Tabs } from "@nextui-org/react"
+import { Tab, Tabs } from "@nextui-org/react"
 import React, { useMemo } from "react"
 import { useParams } from "next/navigation"
+import Link from "next/link"
 type TabType = { param: string; name: string }
 export default function TopicsMenu(props: { topics: string }) {
   const topics: TopicType[] = useMemo(() => JSON.parse(props.topics), [props])
@@ -33,8 +34,11 @@ export default function TopicsMenu(props: { topics: string }) {
         {(topic) => (
           <Tab
             key={topic.param}
-            title={topic.name}
-            href={`/topics/${topic.param == "all" ? "" : topic.param}`}
+            title={
+              <Link href={`/topics/${topic.param == "all" ? "" : topic.param}`}>
+                {topic.name}
+              </Link>
+            }
           ></Tab>
         )}
       </Tabs>
