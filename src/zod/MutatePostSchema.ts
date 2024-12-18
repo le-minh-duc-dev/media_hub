@@ -29,5 +29,3 @@ const PostBodyItemSchemaOnServer = z.object({
 export const MutatePostSchemaOnServer = MutatePostSchema.extend({
   body: z.array(PostBodyItemSchemaOnServer),
 })
-
-export const DeletedUrlsSchema=z.array(z.string().min(1))

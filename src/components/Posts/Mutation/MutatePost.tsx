@@ -24,6 +24,7 @@ import { v4 as uuidv4 } from "uuid"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MutatePostSchema } from "@/zod/MutatePostSchema"
 import UploadingModal from "./UploadingModal"
+import DangerousSection from "./DangerousSection"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -41,7 +42,8 @@ export default function MutatePost(
     onSubmit: (
       data: PostType,
       setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
-      setUploadPercentage: React.Dispatch<React.SetStateAction<number>>
+      setUploadPercentage: React.Dispatch<React.SetStateAction<number>>,
+      _id?: string
     ) => Promise<void>
     removeFn: (
       id: string,
@@ -88,7 +90,12 @@ export default function MutatePost(
   })
   const body = watch("body")
   const onSubmit: SubmitHandler<PostType> = async (data) => {
-    await props.onSubmit(data, setSubmitting, setUploadPercentage)
+    await props.onSubmit(
+      data,
+      setSubmitting,
+      setUploadPercentage,
+      initialPost?._id?.toString()
+    )
   }
   console.log(errors)
   if (!girls) return <div>No girls yet.</div>
@@ -247,6 +254,7 @@ export default function MutatePost(
             {initialPost ? "Cập nhật" : "Tạo bài viết"}
           </Button>
         </form>
+        {!!initialPost && <DangerousSection param={initialPost.param} />}
       </div>
     </div>
   )
