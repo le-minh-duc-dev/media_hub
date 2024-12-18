@@ -5,12 +5,16 @@ import { protectUpdateContentPage } from "@/authentication/protect"
 import { createPost } from "@/services/posts"
 // import { createPost } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
-import { EditPostSchemaOnServer } from "@/zod/EditPostSchema"
+import {
+  DeletedUrlsSchema,
+  MutatePostSchemaOnServer,
+} from "@/zod/MutatePostSchema"
 import slug from "slug"
 
-export async function createPosts(post: PostType) {
+export async function updatePost(post: PostType, deletedUrls: string[]) {
   await protectUpdateContentPage()
-  const validationResult = EditPostSchemaOnServer.safeParse(post)
+  const validationResult = MutatePostSchemaOnServer.safeParse(post)
+  const deletedUrlsValidationResult = DeletedUrlsSchema.safeParse(deletedUrls)
   if (!validationResult.success) {
     return { message: "Invalid data" }
   }
@@ -29,6 +33,10 @@ export async function createPosts(post: PostType) {
     body: safePost.body,
     view: safePost.view,
   }
-  await createPost(newPost)
+  try {
+   
+    await createPost(newPost)
+  } catch (error) {}
+
   return { message: "success" }
 }

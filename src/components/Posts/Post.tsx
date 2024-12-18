@@ -8,7 +8,12 @@ import { formatDateTime, formatView } from "@/lib/utils"
 import Link from "next/link"
 import { TopicType } from "@/types/topics.types"
 import { IoGrid } from "react-icons/io5"
-import { FaChevronCircleUp, FaCrown, FaRegListAlt } from "react-icons/fa"
+import {
+  FaChevronCircleUp,
+  FaCrown,
+  FaRegEdit,
+  FaRegListAlt,
+} from "react-icons/fa"
 import ImagesList from "./ImagesList"
 import useScrollingDown from "@/lib/customHooks/useScrollingDown"
 import useScrollY from "@/lib/customHooks/useScrollY"
@@ -73,22 +78,32 @@ const Post = memo(function Post({
         </Link>
       </div>
       <section className="mt-6 ">
-        <Tabs
-          aria-label="Options"
-          variant="bordered"
-          onSelectionChange={(key) => {
-            if (key == "list") {
-              setIsGridMode(false)
-              console.log("list")
-            } else {
-              setIsGridMode(true)
-              console.log("grid")
-            }
-          }}
-        >
-          <Tab key="list" title={<FaRegListAlt />} />
-          <Tab key="gird" title={<IoGrid />} />
-        </Tabs>
+        <div className="flex gap-x-4 items-center">
+          <Tabs
+            aria-label="Options"
+            variant="bordered"
+            onSelectionChange={(key) => {
+              if (key == "list") {
+                setIsGridMode(false)
+                console.log("list")
+              } else {
+                setIsGridMode(true)
+                console.log("grid")
+              }
+            }}
+          >
+            <Tab key="list" title={<FaRegListAlt />} />
+            <Tab key="gird" title={<IoGrid />} />
+          </Tabs>
+          <Tooltip content="Chỉnh sửa bài viết">
+            <Link
+              className=" border-2 rounded p-2 border-foreground-600 h-11 flex justify-center items-center aspect-square"
+              href={`/admin/posts/edit/${post.param}`}
+            >
+              <FaRegEdit className="text-lg" />
+            </Link>
+          </Tooltip>
+        </div>
         <div
           dangerouslySetInnerHTML={{ __html: post.description }}
           className="text-justify mt-12"

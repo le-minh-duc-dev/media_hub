@@ -11,7 +11,7 @@ const PostBodyItemSchema = z.object({
 })
 
 // Schema for PostType
-export const EditPostSchema = z.object({
+export const MutatePostSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được bỏ trống"),
   description: z.string().default(""),
   isPrivate: z.boolean().default(false),
@@ -26,7 +26,8 @@ const PostBodyItemSchemaOnServer = z.object({
 })
 
 // Schema for PostType
-export const EditPostSchemaOnServer = EditPostSchema.extend({
+export const MutatePostSchemaOnServer = MutatePostSchema.extend({
   body: z.array(PostBodyItemSchemaOnServer),
 })
 
+export const DeletedUrlsSchema=z.array(z.string().min(1))

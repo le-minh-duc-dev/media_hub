@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 import { GirlType } from "@/types/girls.types"
-import { PostType } from "@/types/posts.types"
+import { PostBodyItem, PostType } from "@/types/posts.types"
 import {
   Autocomplete,
   AutocompleteItem,
@@ -13,31 +13,43 @@ import {
 import React, { useState } from "react"
 import FilePicker from "./FilePicker"
 import { FaCrown } from "react-icons/fa"
-import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import {
+  useForm,
+  SubmitHandler,
+  Controller,
+  UseFormSetValue,
+} from "react-hook-form"
 import ImageItem from "./ImageItem"
-import { uploadFile } from "@/services/media/clientService"
 import { v4 as uuidv4 } from "uuid"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { EditPostSchema } from "@/zod/EditPostSchema"
-import { createPosts } from "@/serverActions/posts"
+import { MutatePostSchema } from "@/zod/MutatePostSchema"
 import UploadingModal from "./UploadingModal"
-const TiptapEditor = dynamic(
-  () => import("@/components/Tiptap/Tiptap"),
-  {
-    ssr: false,
-    loading: () => <p>Editor loading...</p>,
-  }
-)
+const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
+  ssr: false,
+  loading: () => <p>Editor loading...</p>,
+})
 
 export type LocalFile = {
   file: File
   id: string
 }
 
-export default function EditPost(props: {
-  girls: string
-  initialPost?: string
-}) {
+export default function MutatePost(
+  props: Readonly<{
+    girls: string
+    initialPost?: string
+    onSubmit: (
+      data: PostType,
+      setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
+      setUploadPercentage: React.Dispatch<React.SetStateAction<number>>
+    ) => Promise<void>
+    removeFn: (
+      id: string,
+      body: PostBodyItem[],
+      setValue: UseFormSetValue<PostType>
+    ) => void
+  }>
+) {
   let initialPost: PostType | undefined
   const girls: GirlType[] | undefined = JSON.parse(props.girls)
   if (props.initialPost) {
@@ -72,39 +84,11 @@ export default function EditPost(props: {
         })) ?? [],
       view: initialPost?.view ?? Math.floor(Math.random() * 30000) + 10000,
     },
-    resolver: zodResolver(EditPostSchema),
+    resolver: zodResolver(MutatePostSchema),
   })
   const body = watch("body")
-
   const onSubmit: SubmitHandler<PostType> = async (data) => {
-    const submitData: PostType = { ...data }
-    const body = submitData.body
-    setUploadPercentage(0)
-    setSubmitting(true)
-    const totalFile = body.filter((bodyItem) => !!bodyItem.file).length
-    await Promise.all(
-      body.map(async ({ file }, index) => {
-        if (!file) return
-        let tried = 0
-        let url = ""
-        while (tried < 3 && !url) {
-          url = await uploadFile(file)
-          tried += 1
-        }
-        setUploadPercentage((pre) => pre + Math.floor(100 / totalFile))
-        if (url != "") {
-          console.log(`Upload file: ${file.name} successfully`)
-          body[index].url = url
-        } else {
-          console.error("Uploading the file failed! : " + file.name)
-        }
-        delete body[index].file
-      })
-    )
-   
-    const result = await createPosts(submitData)
-    setSubmitting(false)
-    if (result?.message) alert(result.message)
+    await props.onSubmit(data, setSubmitting, setUploadPercentage)
   }
   console.log(errors)
   if (!girls) return <div>No girls yet.</div>
@@ -242,9 +226,11 @@ export default function EditPost(props: {
                 isDisabled={submitting}
                 file={bodyItem.file}
                 id={bodyItem.id!}
+                url={bodyItem.url}
                 removeFn={(id) => {
-                  const updatedBody = body.filter((item) => item.id !== id)
-                  setValue("body", updatedBody)
+                  props.removeFn(id, body, setValue)
+                  // const updatedBody = body.filter((item) => item.id !== id)
+                  // setValue("body", updatedBody)
                 }}
                 key={bodyItem.id}
               />
