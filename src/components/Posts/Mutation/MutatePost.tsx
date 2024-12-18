@@ -1,5 +1,4 @@
 "use client"
-
 import dynamic from "next/dynamic"
 import { GirlType } from "@/types/girls.types"
 import { PostBodyItem, PostType } from "@/types/posts.types"
@@ -11,7 +10,6 @@ import {
   Switch,
 } from "@nextui-org/react"
 import React, { useState } from "react"
-import FilePicker from "./FilePicker"
 import { FaCrown } from "react-icons/fa"
 import {
   useForm,
@@ -19,12 +17,12 @@ import {
   Controller,
   UseFormSetValue,
 } from "react-hook-form"
-import ImageItem from "./ImageItem"
 import { v4 as uuidv4 } from "uuid"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MutatePostSchema } from "@/zod/MutatePostSchema"
 import UploadingModal from "./UploadingModal"
 import DangerousSection from "./DangerousSection"
+import FilesSection from "./FilesSection"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -203,46 +201,13 @@ export default function MutatePost(
 
           {/* FilePicker */}
 
-          <div
-            className={`grid p-4 gap-2 grid-cols-5 lg:w-[600px] max-w-full xl:max-w-[1000px]  bg-content2 rounded-xl ${
-              submitting ? "opacity-25" : ""
-            }`}
-          >
-            <Controller
-              name="body"
-              control={control}
-              render={({ field }) => (
-                <FilePicker
-                  isDisabled={submitting}
-                  onPick={(localfiles) => {
-                    const updatedFiles = [
-                      ...field.value,
-                      ...localfiles.map((localfile) => ({
-                        file: localfile.file,
-                        id: localfile.id,
-                      })),
-                    ]
-                    field.onChange(updatedFiles)
-                  }}
-                />
-              )}
-            />
-
-            {body.map((bodyItem) => (
-              <ImageItem
-                isDisabled={submitting}
-                file={bodyItem.file}
-                id={bodyItem.id!}
-                url={bodyItem.url}
-                removeFn={(id) => {
-                  props.removeFn(id, body, setValue)
-                  // const updatedBody = body.filter((item) => item.id !== id)
-                  // setValue("body", updatedBody)
-                }}
-                key={bodyItem.id}
-              />
-            ))}
-          </div>
+          <FilesSection
+            submitting={submitting}
+            control={control}
+            body={body}
+            setValue={setValue}
+            removeFn={props.removeFn}
+          />
 
           {/* Submit Button */}
           <Button

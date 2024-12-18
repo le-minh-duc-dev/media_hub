@@ -1,7 +1,8 @@
 import React, { useId } from "react"
 import { FaPlus } from "react-icons/fa"
-import { LocalFile } from "./CreatePost"
+
 import { v4 as uuidv4 } from "uuid"
+import { LocalFile } from "./MutatePost"
 export default function FilePicker({
   onPick,
   allowedTypes = ["image/png", "image/jpeg", "video/mp4"],
