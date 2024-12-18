@@ -1,8 +1,8 @@
 import { auth } from "@/authentication/auth"
 import Post from "@/components/Posts/Post"
 import RelatedPosts from "@/components/Posts/RelatedPosts"
-import { createDailyPost, getDailyPost } from "@/services/dailyPosts"
-import { getOnlyPublicPost, getPost, getRandomPosts } from "@/services/posts"
+import { getDailyPost } from "@/services/dailyPosts"
+import { getOnlyPublicPost, getPost } from "@/services/posts"
 import { DailyPost } from "@/types/dailyPosts.types"
 
 export default async function Home() {
@@ -12,27 +12,12 @@ export default async function Home() {
     : await getOnlyPublicPost({ limit: 10 })
   const today = new Date()
   const searchDate = {
-    date: today.getDate(),
-    month: today.getMonth(),
-    year: today.getFullYear(),
+    UTCDate: today.getUTCDate(),
+    UTCMonth: today.getUTCMonth(),
+    UTCYear: today.getUTCFullYear(),
   }
-  let dailyPost: DailyPost | null = await getDailyPost(searchDate)
+  const dailyPost: DailyPost | null = await getDailyPost(searchDate)
 
-  if (!dailyPost) {
-    const publicPosts = await getRandomPosts({ isPrivate: false })
-    const privatePosts = await getRandomPosts({})
-    let publicPost = null
-    let privatePost = null
-    if (publicPosts.length > 0) {
-      publicPost = publicPosts[0]
-    }
-    if (privatePosts.length > 0) {
-      privatePost = privatePosts[0]
-    }
-
-    await createDailyPost(privatePost?._id, publicPost?._id)
-    dailyPost = await getDailyPost(searchDate)
-  }
   if (!dailyPost) return <div>Chưa có bài viết</div>
   const post = session?.user.canAccessVipContent
     ? dailyPost.privatePost

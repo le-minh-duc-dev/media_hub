@@ -3,13 +3,12 @@ import DailyPost from "@/database/models/DailyPost"
 import { unstable_cache } from "next/cache"
 
 export const GET_DAILY_POST = "GET_DAILY_POST"
-
-async function createDailyPost(privatePostId: string, publicPostId: string) {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+export type CreateDailyPostType = {date?:string,privatePostId: string, publicPostId: string}
+async function createDailyPost({date,privatePostId, publicPostId}:CreateDailyPostType) {
+ 
   await dbConnect()
   const dailyPost = await DailyPost.create({
-    date: today,
+    date,
     privatePost: privatePostId,
     publicPost: publicPostId,
   })
@@ -17,33 +16,36 @@ async function createDailyPost(privatePostId: string, publicPostId: string) {
 }
 
 function getDailyPost({
-  date,
-  month,
-  year,
+  UTCDate,
+  UTCMonth,
+  UTCYear,
 }: {
-  date: number
-  month: number
-  year: number
+  UTCDate: number
+  UTCMonth: number
+  UTCYear: number
 }) {
-  return unstable_cache(getDailyPostNoCache, [], { tags: [GET_DAILY_POST] })({
-    date,
-    month,
-    year,
+  return unstable_cache(getDailyPostNoCache, [], {
+    tags: [GET_DAILY_POST],
+  })({
+    UTCDate,
+    UTCMonth,
+    UTCYear,
   })
 }
 async function getDailyPostNoCache({
-  date,
-  month,
-  year,
+  UTCDate,
+  UTCMonth,
+  UTCYear,
 }: {
-  date: number
-  month: number
-  year: number
+  UTCDate: number
+  UTCMonth: number
+  UTCYear: number
 }) {
   await dbConnect()
-  const searchDate = new Date(year, month, date)
-  searchDate.setHours(0, 0, 0, 0)
-  const dailyPost = await DailyPost.findOne({ date: searchDate })
+
+  const dailyPost = await DailyPost.findOne({
+    date: `${UTCYear}-${UTCMonth}-${UTCDate}`,
+  })
   return dailyPost
 }
 

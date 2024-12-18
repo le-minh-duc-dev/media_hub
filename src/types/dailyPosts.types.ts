@@ -7,3 +7,8 @@ export type DailyPost = {
   publicPost: PostType | string
   privatePost: PostType | string
 }
+export type SearchDate = {
+  date: number
+  month: number
+  year: number
+}

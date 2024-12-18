@@ -5,15 +5,8 @@ const { Schema } = mongoose
 const dailyPostSchema = new Schema(
   {
     date: {
-      type: Date,
+      type: String,
       required: true,
-      default: Date.now,
-      validate: {
-        validator: function (value: Date) {
-          return value <= new Date()
-        },
-        message: "Date cannot be in the future.",
-      },
     },
 
     privatePost: {
@@ -33,13 +26,13 @@ const dailyPostSchema = new Schema(
   }
 )
 
-// Indexing for optimized query performance
-dailyPostSchema.index({ date: 1 }, { unique: true }) // Ensures no duplicate records for the same date
 
-// Middleware: Populates posts when fetching DailyPost documents
+dailyPostSchema.index({ date: 1 }, { unique: true })
+
+
 
 const populate = {
-  ...populateConfig
+  ...populateConfig,
 }
 dailyPostSchema.pre("find", function () {
   this.populate({
