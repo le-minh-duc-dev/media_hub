@@ -8,12 +8,14 @@ export default function ImageItem({
   file,
   url,
   removeFn,
-}: {
+  isDisabled = false,
+}: Readonly<{
   id: string
   file?: File
   url?: string
   removeFn: (id: string) => void
-}) {
+  isDisabled?: boolean
+}>) {
   const [fileUrl, setFileUrl] = useState<undefined | string>(undefined)
   const [type, setType] = useState("image")
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function ImageItem({
         isIconOnly
         radius="full"
         size="sm"
+        isDisabled={isDisabled}
         className="absolute top-2 right-2 z-20 bg-black/50 group-hover:flex hidden"
         onPress={() => {
           removeFn(id)

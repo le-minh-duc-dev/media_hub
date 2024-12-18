@@ -12,9 +12,11 @@ const extensions = [Color, StarterKit]
 const TiptapEditor = memo(function TiptapEditor({
   initialContent = "",
   onChange = () => {},
+  isDisabled=false
 }: {
   initialContent: string
-  onChange?: (value: string) => void
+  onChange?: (value: string) => void,
+  isDisabled:boolean
 }) {
   const { theme } = useTheme()
   const editorProps = {
@@ -33,9 +35,10 @@ const TiptapEditor = memo(function TiptapEditor({
     onUpdate({ editor }) {
       onChange(editor.getHTML())
     },
+    editable:!isDisabled
   })
   return (
-    <div className="w-[500px] max-w-full border rounded-xl p-4 bg-content2">
+    <div className={ `w-[500px] max-w-full border rounded-xl p-4 bg-content2 ${isDisabled?"opacity-25":""}`}>
       <MenuBar editor={editor} />
       <div className="mt-2">
         <EditorContent editor={editor} />

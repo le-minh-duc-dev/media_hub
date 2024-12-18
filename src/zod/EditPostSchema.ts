@@ -11,13 +11,22 @@ const PostBodyItemSchema = z.object({
 })
 
 // Schema for PostType
-const ValidationSchema = z.object({
+export const EditPostSchema = z.object({
   title: z.string().min(1, "Tiêu đề không được bỏ trống"),
-  description: z.string(),
-  isPrivate: z.boolean(),
+  description: z.string().default(""),
+  isPrivate: z.boolean().default(false),
   body: z.array(PostBodyItemSchema),
   girl: z.string().length(24),
   view: z.number().int().nonnegative(),
 })
 
-export { PostBodyItemSchema, ValidationSchema }
+const PostBodyItemSchemaOnServer = z.object({
+  url: z.string().url(), 
+  description: z.string().optional(),
+})
+
+// Schema for PostType
+export const EditPostSchemaOnServer = EditPostSchema.extend({
+  body: z.array(PostBodyItemSchemaOnServer),
+})
+

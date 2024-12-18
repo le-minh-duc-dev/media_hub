@@ -6,10 +6,12 @@ export default function FilePicker({
   onPick,
   allowedTypes = ["image/png", "image/jpeg", "video/mp4"],
   maxSizeMB = 100,
+  isDisabled = false,
 }: Readonly<{
   onPick: (localfiles: LocalFile[]) => void
   allowedTypes?: string[]
   maxSizeMB?: number
+  isDisabled?: boolean
 }>) {
   const uuid = useId()
 
@@ -41,7 +43,9 @@ export default function FilePicker({
     <div>
       <label
         htmlFor={uuid}
-        className=" w-full aspect-square bg-content4 flex justify-center items-center cursor-pointer rounded-xl"
+        className={` w-full aspect-square bg-content4 flex justify-center items-center cursor-pointer rounded-xl ${
+          isDisabled ? "opacity-25" : ""
+        }`}
       >
         <FaPlus />
       </label>
@@ -53,6 +57,7 @@ export default function FilePicker({
         className="hidden"
         accept={allowedTypes.join(",")}
         onChange={handleChange}
+        disabled={isDisabled}
       />
     </div>
   )

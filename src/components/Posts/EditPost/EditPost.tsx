@@ -10,7 +10,7 @@ import {
   Input,
   Switch,
 } from "@nextui-org/react"
-import React from "react"
+import React, { useState } from "react"
 import FilePicker from "./FilePicker"
 import { FaCrown } from "react-icons/fa"
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
@@ -18,10 +18,16 @@ import ImageItem from "./ImageItem"
 import { uploadFile } from "@/services/media/clientService"
 import { v4 as uuidv4 } from "uuid"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ValidationSchema } from "./ValidationSchema"
-const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
-  ssr: false,
-})
+import { EditPostSchema } from "@/zod/EditPostSchema"
+import { createPosts } from "@/serverActions/posts"
+import UploadingModal from "./UploadingModal"
+const TiptapEditor = dynamic(
+  () => import("@/components/Tiptap/Tiptap"),
+  {
+    ssr: false,
+    loading: () => <p>Editor loading...</p>,
+  }
+)
 
 export type LocalFile = {
   file: File
@@ -37,7 +43,10 @@ export default function EditPost(props: {
   if (props.initialPost) {
     initialPost = JSON.parse(props.initialPost)
   }
-
+  //submitting
+  const [submitting, setSubmitting] = useState(false)
+  const [uploadPercentage, setUploadPercentage] = useState(0)
+  //
   const {
     control,
     register,
@@ -61,38 +70,48 @@ export default function EditPost(props: {
           ...bodyItem,
           id: uuidv4(),
         })) ?? [],
-      view: initialPost?.view ?? 0,
+      view: initialPost?.view ?? Math.floor(Math.random() * 30000) + 10000,
     },
-    resolver: zodResolver(ValidationSchema),
+    resolver: zodResolver(EditPostSchema),
   })
   const body = watch("body")
+
   const onSubmit: SubmitHandler<PostType> = async (data) => {
     const submitData: PostType = { ...data }
     const body = submitData.body
-    // await Promise.all(
-    //   body.map(async ({ file }, index) => {
-    //     if (!file) return
-    //     let tried = 0
-    //     let url = ""
-    //     while (tried < 3 && !url) {
-    //       url = await uploadFile(file)
-    //       tried += 1
-    //     }
-    //     if (url != "") {
-    //       console.log(`Upload file: ${file.name} successfully`)
-    //       body[index].url = url
-    //     } else {
-    //       console.error("Uploading the file failed! : " + file.name)
-    //     }
-    //     delete body[index].file
-    //   })
-    // )
-    console.log(submitData)
+    setUploadPercentage(0)
+    setSubmitting(true)
+    const totalFile = body.filter((bodyItem) => !!bodyItem.file).length
+    await Promise.all(
+      body.map(async ({ file }, index) => {
+        if (!file) return
+        let tried = 0
+        let url = ""
+        while (tried < 3 && !url) {
+          url = await uploadFile(file)
+          tried += 1
+        }
+        setUploadPercentage((pre) => pre + Math.floor(100 / totalFile))
+        if (url != "") {
+          console.log(`Upload file: ${file.name} successfully`)
+          body[index].url = url
+        } else {
+          console.error("Uploading the file failed! : " + file.name)
+        }
+        delete body[index].file
+      })
+    )
+   
+    const result = await createPosts(submitData)
+    setSubmitting(false)
+    if (result?.message) alert(result.message)
   }
+  console.log(errors)
   if (!girls) return <div>No girls yet.</div>
   return (
     <div className="mt-12 flex justify-center">
       <div>
+        <UploadingModal isOpen={submitting} value={uploadPercentage} />
         <h1 className="text-3xl font-semibold text-center">
           {initialPost ? "Cập nhật bài viết" : "Tạo bài viết"}
         </h1>
@@ -107,6 +126,7 @@ export default function EditPost(props: {
               defaultValue={initialPost?.title ?? ""}
               isInvalid={!!errors.title}
               errorMessage={errors.title?.message}
+              isDisabled={submitting}
             />
           </div>
 
@@ -118,6 +138,7 @@ export default function EditPost(props: {
               control={control}
               render={({ field }) => (
                 <TiptapEditor
+                  isDisabled={submitting}
                   initialContent={field.value || ""}
                   onChange={(value) => field.onChange(value)}
                 />
@@ -139,6 +160,7 @@ export default function EditPost(props: {
                   onSelectionChange={(key) => field.onChange(key)}
                   isInvalid={!!errors.girl}
                   errorMessage={errors.girl?.message}
+                  isDisabled={submitting}
                 >
                   {girls.map((girl) => (
                     <AutocompleteItem key={girl._id.toString()}>
@@ -165,6 +187,7 @@ export default function EditPost(props: {
               defaultValue={getValues().view.toString()}
               isInvalid={!!errors.view}
               errorMessage={errors.view?.message}
+              isDisabled={submitting}
             />
           </div>
           {/* VIP Post Switch */}
@@ -177,6 +200,7 @@ export default function EditPost(props: {
                   isSelected={field.value}
                   onValueChange={(value) => field.onChange(value)}
                   aria-label="Is VIP Post"
+                  isDisabled={submitting}
                 >
                   <div className="flex items-center gap-x-2">
                     Bài viết VIP <FaCrown className="text-yellow-500" />
@@ -188,20 +212,23 @@ export default function EditPost(props: {
 
           {/* FilePicker */}
 
-          <div className="grid p-4 gap-2 grid-cols-5 lg:w-[600px] max-w-full xl:max-w-[1000px]  bg-content2 rounded-xl">
+          <div
+            className={`grid p-4 gap-2 grid-cols-5 lg:w-[600px] max-w-full xl:max-w-[1000px]  bg-content2 rounded-xl ${
+              submitting ? "opacity-25" : ""
+            }`}
+          >
             <Controller
               name="body"
               control={control}
               render={({ field }) => (
                 <FilePicker
+                  isDisabled={submitting}
                   onPick={(localfiles) => {
                     const updatedFiles = [
                       ...field.value,
                       ...localfiles.map((localfile) => ({
-                        url: "",
                         file: localfile.file,
                         id: localfile.id,
-                        description: "",
                       })),
                     ]
                     field.onChange(updatedFiles)
@@ -212,6 +239,7 @@ export default function EditPost(props: {
 
             {body.map((bodyItem) => (
               <ImageItem
+                isDisabled={submitting}
                 file={bodyItem.file}
                 id={bodyItem.id!}
                 removeFn={(id) => {
@@ -224,7 +252,12 @@ export default function EditPost(props: {
           </div>
 
           {/* Submit Button */}
-          <Button color="primary" type="submit">
+          <Button
+            color="primary"
+            type="submit"
+            isDisabled={submitting}
+            isLoading={submitting}
+          >
             {initialPost ? "Cập nhật" : "Tạo bài viết"}
           </Button>
         </form>
