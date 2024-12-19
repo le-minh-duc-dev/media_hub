@@ -2,17 +2,19 @@ import React, { useId } from "react"
 import { FaPlus } from "react-icons/fa"
 
 import { v4 as uuidv4 } from "uuid"
-import { LocalFile } from "./MutatePost"
+import { LocalFile } from "./Posts/Mutation/MutatePost"
 export default function FilePicker({
   onPick,
   allowedTypes = ["image/png", "image/jpeg", "video/mp4"],
   maxSizeMB = 100,
   isDisabled = false,
+  multiple = false,
 }: Readonly<{
   onPick: (localfiles: LocalFile[]) => void
   allowedTypes?: string[]
   maxSizeMB?: number
   isDisabled?: boolean
+  multiple: boolean
 }>) {
   const uuid = useId()
 
@@ -53,7 +55,7 @@ export default function FilePicker({
 
       <input
         type="file"
-        multiple
+        multiple={multiple}
         id={uuid}
         className="hidden"
         accept={allowedTypes.join(",")}

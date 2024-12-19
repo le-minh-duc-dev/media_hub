@@ -20,9 +20,10 @@ import {
 import { v4 as uuidv4 } from "uuid"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MutatePostSchema } from "@/zod/MutatePostSchema"
-import UploadingModal from "./UploadingModal"
-import DangerousSection from "./DangerousSection"
+import UploadingModal from "../../UploadingModal"
+import DangerousSection from "../../DangerousSection"
 import FilesSection from "./FilesSection"
+import { deletePost } from "@/serverActions/posts"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -100,7 +101,11 @@ export default function MutatePost(
   return (
     <div className="mt-12 flex justify-center">
       <div>
-        <UploadingModal isOpen={submitting} value={uploadPercentage} />
+        <UploadingModal
+          message="Updating post..."
+          isOpen={submitting}
+          value={uploadPercentage}
+        />
         <h1 className="text-3xl font-semibold text-center">
           {initialPost ? "Cập nhật bài viết" : "Tạo bài viết"}
         </h1>
@@ -219,7 +224,13 @@ export default function MutatePost(
             {initialPost ? "Cập nhật" : "Tạo bài viết"}
           </Button>
         </form>
-        {!!initialPost && <DangerousSection param={initialPost.param} />}
+        {!!initialPost && (
+          <DangerousSection
+            param={initialPost.param}
+            deleteFn={deletePost}
+            triggerButtonName="Xóa bài viết"
+          />
+        )}
       </div>
     </div>
   )

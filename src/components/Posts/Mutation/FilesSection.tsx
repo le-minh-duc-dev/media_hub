@@ -1,6 +1,6 @@
 import React from "react"
 import { Control, Controller, UseFormSetValue } from "react-hook-form"
-import FilePicker from "./FilePicker"
+import FilePicker from "../../FilePicker"
 import ImageItem from "./ImageItem"
 import { PostBodyItem, PostType } from "@/types/posts.types"
 import { Chip } from "@nextui-org/react"
@@ -33,6 +33,7 @@ export default function FilesSection({
         control={control}
         render={({ field }) => (
           <FilePicker
+            multiple
             isDisabled={submitting}
             onPick={(localfiles) => {
               const updatedFiles = [

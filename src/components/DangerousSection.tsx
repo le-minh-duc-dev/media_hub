@@ -1,4 +1,4 @@
-import { deletePost } from "@/serverActions/posts"
+
 import {
   Accordion,
   AccordionItem,
@@ -15,13 +15,13 @@ import {
 import React, { useState } from "react"
 
 const confirmKey = "Delete this post"
-export default function DangerousSection({ param }: { param: string }) {
+export default function DangerousSection({ param, deleteFn,triggerButtonName }: { param: string, deleteFn:(param:string)=>Promise<{message:string}>,triggerButtonName:string }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [confirmText, setConfirmText] = useState("")
   const [submitting, setSubmitting] = useState(false)
   async function onDelete() {
     setSubmitting(true)
-    const result = await deletePost(param)
+    const result = await deleteFn(param)
     if (result?.message) alert(result?.message)
   }
   return (
@@ -34,7 +34,7 @@ export default function DangerousSection({ param }: { param: string }) {
           title="Khu vực nguy hiểm"
         >
           <Button onPress={onOpen} color="danger">
-            Xoá bài viết
+           {triggerButtonName}
           </Button>
           <Modal
             isOpen={isOpen}
