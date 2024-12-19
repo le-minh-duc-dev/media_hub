@@ -1,4 +1,4 @@
-import React, { useMemo } from "react"
+import React, { Key } from "react"
 import {
   Table,
   TableHeader,
@@ -6,10 +6,19 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
+  User,
+  Chip,
+  Tooltip,
+  Image,
+  Pagination,
 } from "@nextui-org/react"
+import { RiEditLine } from "react-icons/ri"
 import { GirlType } from "@/types/girls.types"
 import { formatDateTime } from "@/lib/utils"
+import { TopicType } from "@/types/topics.types"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+
 const columns = [
   {
     label: "Girl xinh",
@@ -20,8 +29,8 @@ const columns = [
     key: "numOfPosts",
   },
   {
-    label: "VIP",
-    key: "vip",
+    label: "Cấp độ",
+    key: "level",
   },
   {
     label: "Ngày tạo",
@@ -33,90 +42,101 @@ const columns = [
   },
 ]
 
-export default function FullTable({ girls }: { girls: GirlType[] }) {
-  const rows = useMemo(() => {
-    return girls.map((girl) => ({
-      key: girl._id as string,
-      girl: girl.name,
-      numOfPosts: 5,
-      vip: girl.isPrivate ? "*" : "",
-      createdAt: formatDateTime(girl.createdAt!),
-      actions: "...",
-    }))
-  }, [girls])
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey]
-
+export default function FullTable({
+  girls,
+  totalPages,
+}: Readonly<{
+  girls: GirlType[]
+  totalPages: number
+}>) {
+  const searchParams = useSearchParams()
+  const page = !isNaN(parseInt(searchParams.get("page") ?? "1"))
+    ? parseInt(searchParams.get("page") ?? "1")
+    : 1
+  const search = searchParams.get("search") ?? ""
+  const router = useRouter()
+  const renderCell = React.useCallback((girl: GirlType, columnKey: Key) => {
     switch (columnKey) {
-      case "name":
+      case "girl":
         return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
+          <Tooltip
+            content={<Image src={girl.url} alt={girl.name} width={300} />}
           >
-            {user.email}
-          </User>
+            <User
+              avatarProps={{ radius: "lg", src: girl.url }}
+              description={girl.name}
+              name={girl.name}
+            >
+              {(girl.topic as TopicType)?.name}
+            </User>
+          </Tooltip>
         )
-      case "role":
+      case "numOfPosts":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">
-              {user.team}
-            </p>
+          <div className="flex flex-col ">
+            <p className="text-bold text-sm ">{girl.numOfPosts ?? 0}</p>
           </div>
         )
-      case "status":
+      case "level":
         return (
           <Chip
             className="capitalize"
-            color={statusColorMap[user.status]}
+            color={girl.isPrivate ? "primary" : "default"}
             size="sm"
             variant="flat"
           >
-            {cellValue}
+            {girl.isPrivate ? "VIP" : "Public"}
           </Chip>
         )
+      case "createdAt":
+        return <div className="">{formatDateTime(girl.createdAt!)}</div>
       case "actions":
         return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon />
-              </span>
+          <div className="relative flex items-center justify-center gap-2">
+            <Tooltip content="Cập nhật girl xinh">
+              <Link
+                href={`/admin/girls/edit/${girl.param}`}
+                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+              >
+                <RiEditLine />
+              </Link>
             </Tooltip>
           </div>
         )
-      default:
-        return cellValue
     }
   }, [])
   return (
-    <Table aria-label="Example static collection table">
+    <Table
+      aria-label="Example static collection table"
+      bottomContent={
+        <div className="flex w-full justify-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="secondary"
+            initialPage={page}
+            onChange={(page) =>
+              router.push(`/admin/girls?page=${page}&search=${search}`)
+            }
+            total={totalPages}
+          />
+        </div>
+      }
+    >
       <TableHeader>
         {columns.map((column) => (
           <TableColumn key={column.key}>{column.label}</TableColumn>
         ))}
       </TableHeader>
-      <TableBody emptyContent={"No girls to display."}>
-        {rows.map((row) => (
-          <TableRow key={row.key}>
+      <TableBody emptyContent={"No girls to display."} items={girls}>
+        {(item) => (
+          <TableRow key={item._id?.toString()}>
             {(columnKey) => (
-              <TableCell>{getKeyValue(row, columnKey)}</TableCell>
+              <TableCell>{renderCell(item, columnKey)}</TableCell>
             )}
           </TableRow>
-        ))}
+        )}
       </TableBody>
     </Table>
   )

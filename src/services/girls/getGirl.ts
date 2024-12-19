@@ -1,8 +1,7 @@
 import { dbConnect } from "@/database/connect"
 import { GirlSearchParams } from "@/types/girls.types"
 import Girl from "@/database/models/Girl"
-import Topic from "@/database/models/Topic"
-import { PopulateOptions } from "mongoose"
+import { PipelineStage } from "mongoose"
 import { unstable_cache } from "next/cache"
 
 export const GET_GIRL_TAG = "GET_GIRL_TAG"
@@ -13,18 +12,19 @@ const DEFAULT_SORT = -1 // Ascending
 
 export function getGirl(
   searchParams: GirlSearchParams = {},
-  isFindOne = false
+  isFindOne = false,
+  includePostCount = false
 ) {
   return unstable_cache(getGirlNoCache, [], {
     tags: [GET_GIRL_TAG],
-  })(searchParams, isFindOne)
+  })(searchParams, isFindOne, includePostCount)
 }
 
 export async function getGirlNoCache(
   searchParams: GirlSearchParams = {},
-  isFindOne = false
+  isFindOne = false,
+  includePostCount = false
 ) {
-  //connect to database
   await dbConnect()
   const {
     param,
@@ -35,49 +35,74 @@ export async function getGirlNoCache(
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
   } = searchParams
-  console.log(topic)
+
   let query: Record<string, unknown> = {}
   if (param) query.param = param
   if (topic) query.topic = topic
   if (isPrivate !== undefined) query.isPrivate = isPrivate
   if (search) query = { $text: { $search: search } }
 
-  // Validate and sanitize pagination and sorting
   const validatedLimit = limit > 0 ? limit : DEFAULT_LIMIT
   const validatedPage = page > 0 ? page : DEFAULT_PAGE
   const validatedSort = sort
 
-  const populateConfig: PopulateOptions = {
-    path: "topic",
-    select: "_id name param",
-    model: Topic,
+  // Base pipeline
+  const pipeline: PipelineStage[] = [
+    { $match: query },
+    { $sort: { updatedAt: validatedSort as 1 | -1 } },
+    { $skip: (validatedPage - 1) * validatedLimit },
+    { $limit: validatedLimit },
+  ]
+
+  // Conditionally add lookup and numOfPosts logic
+  if (includePostCount) {
+    pipeline.push(
+      {
+        $lookup: {
+          from: "posts",
+          localField: "_id",
+          foreignField: "girl",
+          as: "posts",
+        },
+      },
+      {
+        $addFields: {
+          numOfPosts: { $size: "$posts" },
+        },
+      },
+      {
+        $project: {
+          posts: 0,
+        },
+      }
+    )
   }
 
-  const girlList = !isFindOne
-    ? await Girl.find(query)
-        .sort({ updatedAt: validatedSort })
-        .skip((validatedPage - 1) * validatedLimit)
-        .limit(validatedLimit)
-        .populate(populateConfig)
-    : await Girl.findOne(query).populate(populateConfig)
+  // If finding a single document
+  if (isFindOne) {
+    pipeline.push({ $limit: 1 })
+  }
 
-  return girlList
+  const girls = await Girl.aggregate(pipeline)
+  return isFindOne ? girls[0] || null : girls
 }
 
 export function getOnlyPublicGirl(
   searchParams: GirlSearchParams = {},
-  isFindOne = false
+  isFindOne = false,
+  includePostCount = false
 ) {
   searchParams.isPrivate = false
-  return getGirl(searchParams, isFindOne)
+  return getGirl(searchParams, isFindOne, includePostCount)
 }
 
 export function getOnlyPrivateGirl(
   searchParams: GirlSearchParams = {},
-  isFindOne = false
+  isFindOne = false,
+  includePostCount = false
 ) {
   searchParams.isPrivate = true
-  return getGirl(searchParams, isFindOne)
+  return getGirl(searchParams, isFindOne, includePostCount)
 }
 
 export async function checkGirlExists(searchParams: GirlSearchParams = {}) {

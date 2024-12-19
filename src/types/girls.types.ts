@@ -19,5 +19,6 @@ export type GirlType = {
   url: string
   user: string | UserType
   topic: string | TopicType
-  createdAt?:string
+  createdAt?:string,
+  numOfPosts?:number
 }
