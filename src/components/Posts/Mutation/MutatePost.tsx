@@ -70,7 +70,7 @@ export default function MutatePost(
     formState: { errors },
   } = useForm<PostType>({
     defaultValues: {
-      title: initialPost?.title ?? "",
+      title: initialPost?.title ?? "Bộ sưu tập ảnh nóng bỏng của Ribi Sachi",
       description: initialPost?.description ?? "",
       girl:
         (initialPost?.girl &&
@@ -157,7 +157,7 @@ export default function MutatePost(
                   isDisabled={submitting}
                 >
                   {girls.map((girl) => (
-                    <AutocompleteItem key={girl._id.toString()}>
+                    <AutocompleteItem key={girl._id?.toString()}>
                       {girl.name}
                     </AutocompleteItem>
                   ))}
