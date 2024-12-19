@@ -1,9 +1,11 @@
-import { ObjectId, SortOrder } from "mongoose"
+import { ObjectId } from "mongoose"
 import { UserType } from "./users.types"
 import { TopicType } from "./topics.types"
 export interface GirlSearchParams {
   page?: number
-  sort?: SortOrder
+  sort_created?: 1|-1
+  sort_updated?: 1|-1
+  sort_level?: 1|-1
   param?: string
   limit?: number
   search?: string

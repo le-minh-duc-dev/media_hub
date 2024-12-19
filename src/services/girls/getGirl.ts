@@ -33,7 +33,9 @@ export async function getGirlNoCache(
     search,
     limit = DEFAULT_LIMIT,
     page = DEFAULT_PAGE,
-    sort = DEFAULT_SORT,
+    sort_created,
+    sort_updated,
+    sort_level,
   } = searchParams
 
   let query: Record<string, unknown> = {}
@@ -44,12 +46,27 @@ export async function getGirlNoCache(
 
   const validatedLimit = limit > 0 ? limit : DEFAULT_LIMIT
   const validatedPage = page > 0 ? page : DEFAULT_PAGE
-  const validatedSort = sort
 
+  const sortFields: Record<string, 1 | -1> = {}
+  if (sort_created) {
+    sortFields["createdAt"] = sort_created
+  }
+  if (sort_level) {
+    sortFields["isPrivate"] = sort_level
+  }
+  if (sort_updated) {
+    sortFields["updatedAt"] = sort_updated
+  }
+  if (!sort_updated && !sort_level && !sort_created) {
+    sortFields["updatedAt"] = DEFAULT_SORT
+  }
+  console.log(sortFields);
   // Base pipeline
   const pipeline: PipelineStage[] = [
     { $match: query },
-    { $sort: { updatedAt: validatedSort as 1 | -1 } },
+    {
+      $sort: sortFields,
+    },
     { $skip: (validatedPage - 1) * validatedLimit },
     { $limit: validatedLimit },
   ]

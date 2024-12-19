@@ -34,22 +34,6 @@ export function getTypeFileOfUrl(url: string) {
   return "unknown"
 }
 
-export function extractIframeContent(html: string) {
-  // Define the regular expression to match the content inside <iframe>...</iframe>
-  const regex = /<iframe[^>]*>.*?<\/iframe>/
-
-  // Use the regex to find the match
-  const match = html.match(regex)
-
-  // If a match is found, return the iframe content
-  if (match) {
-    return match[0]
-  }
-
-  // If no match is found, return an empty string or a message indicating no iframe found
-  return ""
-}
-
 export function normalizeHTMLString(htmlString: string) {
   // Replace encoded characters with their corresponding symbols
   const normalizedHTML = htmlString
@@ -101,144 +85,6 @@ export function extractPublicId(cloudinarySecureUrl: string) {
   return extractedPart
 }
 
-export function compareTags(tagA: string, tagB: string) {
-  // console.log("tagA", tagA, "tagB", tagB)
-  if (tagA) tagA = tagA.toLowerCase()
-  if (tagB) tagB = tagB.toLowerCase()
-  return (tagA && tagA.includes(tagB)) || (tagB && tagB.includes(tagA))
-}
-
-// export async function getPayloadFromToken(token) {
-//   try {
-//     const { payload, protectedHeader } = await jose.jwtVerify(
-//       token,
-//       new TextEncoder().encode(process.env.SECRET_JWT_KEY)
-//     )
-
-//     return payload
-//   } catch (error) {
-//     return null
-//   }
-// }
-
-export function convertUpdatedPostValuesToFormData(id: string, values) {
-  const formData = new FormData()
-  formData.append("id", id)
-  formData.append("title", values.title)
-  formData.append("girl", values.girl)
-  formData.append("description", values.description)
-  formData.append("view", values.view)
-  formData.append("isPrivate", values.isPrivate)
-  formData.append("deletedUrlList", JSON.stringify(values.deletedUrlList))
-  formData.append("bodyLength", values.body.length)
-  values.body.forEach((element, index) => {
-    formData.append(`description-${index}`, element.description)
-    formData.append(`url-${index}`, element.url)
-  })
-  return formData
-}
-
-export function convertFormDataToUpdatedPostValues(formData) {
-  const values = {
-    id: formData.get("id"),
-    title: formData.get("title"),
-    girl: formData.get("girl"),
-    description: formData.get("description"),
-    view: formData.get("view"),
-    isPrivate: formData.get("isPrivate"),
-    deletedUrlList: JSON.parse(formData.get("deletedUrlList")),
-    body: [],
-  }
-  const bodyLength = formData.get("bodyLength")
-  for (let index = 0; index < bodyLength; index++) {
-    values.body.push({
-      description: formData.get(`description-${index}`),
-      url: formData.get(`url-${index}`),
-    })
-  }
-  return values
-}
-
-// for creating post
-export function convertNewPostValuesToFormData(values) {
-  const formData = new FormData()
-
-  formData.append("title", values.title)
-  formData.append("girl", values.girl)
-
-  formData.append("description", values.description)
-
-  formData.append("view", values.view)
-  formData.append("isPrivate", values.isPrivate)
-
-  formData.append("bodyLength", values.body.length)
-  values.body.forEach((element, index) => {
-    formData.append(`url-${index}`, element.url)
-    formData.append(`description-${index}`, element.description)
-  })
-  return formData
-}
-
-export function convertFormDataToNewPostValues(formData) {
-  const values = {
-    title: formData.get("title") || "",
-    description: formData.get("description") || "",
-    girl: formData.get("girl") || "",
-
-    view: formData.get("view") || 0,
-    isPrivate: formData.get("isPrivate") == "true",
-    bodyLength: formData.get("bodyLength") || 0,
-    body: [],
-  }
-  const bodyLength = formData.get("bodyLength")
-  for (let index = 0; index < bodyLength; index++) {
-    values.body.push({
-      url: formData.get(`url-${index}`),
-      description: formData.get(`description-${index}`),
-    })
-  }
-  return values
-}
-//
-export function convertFlatValuesToFormData(values) {
-  const formData = new FormData()
-  formData.append("fields", JSON.stringify(Object.keys(values)))
-  Object.keys(values).forEach((key) => formData.append(key, values[key]))
-  return formData
-}
-
-export function convertFormDataToFlatValues(formData) {
-  const values = {}
-  try {
-    const fields = JSON.parse(formData.get("fields"))
-    fields.forEach((field) => {
-      values[field] = formData.get(field)
-    })
-  } catch (error) {
-    values.error = error.toString()
-  } finally {
-    return values
-  }
-}
-
-export function formatToRightParams(param) {
-  var decodedParam = decodeURIComponent(param)
-  var replacedParam = decodedParam.replace(/ /g, "+")
-  return replacedParam
-}
-
-export function formatYearMonthDay(dateString) {
-  try {
-    const date = new Date(dateString)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, "0") // Adding 1 to get the correct month (January is 0)
-    const day = String(date.getDate()).padStart(2, "0")
-    return `${year}-${month}-${day}`
-  } catch (err) {
-    return ""
-  }
-}
-
 export function isRegExpString(str: string) {
   try {
     new RegExp(str)
@@ -261,28 +107,22 @@ export function formatView(viewCount: number) {
   return viewCount
 }
 
-export function toggleTheme() {
-  const currentTheme = localStorage.getItem("theme")
-  console.log(currentTheme)
-  // Whenever the user explicitly chooses light mode
-  if (!currentTheme || currentTheme == "light") {
-    localStorage.setItem("theme", "dark")
-    document.documentElement.classList.add("dark")
-    return
-  }
-  localStorage.setItem("theme", "light")
-  document.documentElement.classList.remove("dark")
-}
-export function setThemeAuto() {
-  if (
-    localStorage.getItem("theme") === "light" ||
-    (!localStorage.getItem("theme") &&
-      window.matchMedia("(prefers-color-scheme: light)").matches)
-  ) {
-    document.documentElement.classList.remove("dark")
-    localStorage.setItem("theme", "light")
-  }
-}
 export function getRandomViewCount(max = 20000) {
   return Math.floor(Math.random() * max + 5000)
+}
+
+export function compareDates(date1: string, date2: string) {
+  
+  // Convert the date strings to Date objects
+  const d1 = new Date(date1)
+  const d2 = new Date(date2)
+
+  // Compare the two dates
+  if (d1 < d2) {
+    return -1 // date1 is earlier than date2
+  } else if (d1 > d2) {
+    return 1 // date1 is later than date2
+  } else {
+    return 0 // dates are equal
+  }
 }

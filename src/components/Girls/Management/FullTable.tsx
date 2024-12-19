@@ -14,11 +14,10 @@ import {
 } from "@nextui-org/react"
 import { RiEditLine } from "react-icons/ri"
 import { GirlType } from "@/types/girls.types"
-import { formatDateTime } from "@/lib/utils"
 import { TopicType } from "@/types/topics.types"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-
+import { formatDateTime } from "@/lib/utils"
 const columns = [
   {
     label: "Girl xinh",
@@ -41,7 +40,7 @@ const columns = [
     key: "actions",
   },
 ]
-
+// const sortableColumns = ["createdAt", "level", "numOfPosts"]
 export default function FullTable({
   girls,
   totalPages,
@@ -105,6 +104,7 @@ export default function FullTable({
         )
     }
   }, [])
+
   return (
     <Table
       aria-label="Example static collection table"
