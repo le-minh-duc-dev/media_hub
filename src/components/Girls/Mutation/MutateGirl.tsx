@@ -139,7 +139,7 @@ export default function MutateGirl(
                   isDisabled={submitting}
                 >
                   {topics.map((topic) => (
-                    <AutocompleteItem key={topic._id.toString()}>
+                    <AutocompleteItem key={topic._id!.toString()}>
                       {topic.name}
                     </AutocompleteItem>
                   ))}

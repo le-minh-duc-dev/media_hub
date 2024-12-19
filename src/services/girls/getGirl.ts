@@ -79,3 +79,7 @@ export function getOnlyPrivateGirl(
   searchParams.isPrivate = true
   return getGirl(searchParams, isFindOne)
 }
+
+export async function checkGirlExists(searchParams: GirlSearchParams = {}) {
+  return (await getGirl(searchParams, true)) != null
+}

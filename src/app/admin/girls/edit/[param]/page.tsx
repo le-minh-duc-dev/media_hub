@@ -1,5 +1,5 @@
 import { protectUpdateContentPage } from "@/authentication/protect"
-import EditGirl from "@/components/Girls/MutateGirl/EditGirl"
+import EditGirl from "@/components/Girls/Mutation/EditGirl"
 import { getGirl } from "@/services/girls"
 import { getTopic } from "@/services/topics"
 import { PostType } from "@/types/posts.types"

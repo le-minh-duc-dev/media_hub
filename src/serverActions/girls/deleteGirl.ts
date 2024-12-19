@@ -6,6 +6,7 @@ import { deleteMediaByURLs } from "@/services/media/mediaService"
 import { checkPostExists } from "@/services/posts"
 import { GirlType } from "@/types/girls.types"
 import mongoose from "mongoose"
+import { redirect } from "next/navigation"
 
 export async function deleteGirl(param: string) {
   await protectUpdateContentPage()
@@ -39,5 +40,5 @@ export async function deleteGirl(param: string) {
   }
   if (aborted)
     return { message: "Có lỗi xảy ra! Không thể xóa girl xinh ngay lúc này!" }
-  return { message: "Xóa girl xinh thành công" }
+  redirect("/admin/girls")
 }

@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import React from "react"
 import MutateGirl from "./MutateGirl"
 import { uploadFile } from "@/services/media/clientService"

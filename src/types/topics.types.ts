@@ -10,7 +10,7 @@ export interface TopicSearchParams {
 }
 
 export type TopicType = {
-  _id: string | ObjectId
+  _id?: string | ObjectId
   name: string
   param: string
   description: string
