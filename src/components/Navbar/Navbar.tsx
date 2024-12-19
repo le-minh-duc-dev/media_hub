@@ -8,13 +8,13 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-  Input,
+  Button,
 } from "@nextui-org/react"
 import dynamic from "next/dynamic"
 const Image = dynamic(() => import("next/image"), { ssr: false })
 import { ThemeSwitcher } from "@/components/ThemeSwitcher"
 import { useTheme } from "next-themes"
-import { IoSearchSharp } from "react-icons/io5"
+import { IoSettingsSharp } from "react-icons/io5"
 import Links from "./Links"
 
 import { NavbarContextType, NavbarProps } from "@/types/navbar.types"
@@ -22,13 +22,15 @@ import { TopicType } from "@/types/topics.types"
 import { GirlType } from "@/types/girls.types"
 import { useSession } from "next-auth/react"
 import { SignOut } from "../SignOut"
+import Search from "./Search"
+import { useRouter } from "next/navigation"
 export const NavbarContext = React.createContext<NavbarContextType>({
   topics: [],
   girls: [],
 })
 export function Navbar(props: Readonly<NavbarProps>) {
   const { data: session } = useSession()
-  console.log(session);
+  const router = useRouter()
   const isLogined = session?.user != null
   const [isMenuOpen] = React.useState(false)
   const { theme } = useTheme()
@@ -91,21 +93,26 @@ export function Navbar(props: Readonly<NavbarProps>) {
             Sign Up
           </Button>
         </NavbarItem> */}
-          <Input
-            classNames={{
-              base: "max-w-full sm:max-w-[10rem] h-10 hidden sm:block",
-              mainWrapper: "h-full",
-              input: "text-small",
-              inputWrapper:
-                "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-            }}
-            placeholder="Type to search..."
-            size="sm"
-            startContent={<IoSearchSharp />}
-            type="search"
-          />
+          <Search />
           <ThemeSwitcher />
-          {isLogined ? <SignOut /> : <Link href="/login" className="underline text-foreground-50">Login</Link>}
+          {isLogined && (
+            <Button
+              variant="light"
+              isIconOnly
+              onPress={() => {
+                router.push("/admin")
+              }}
+            >
+              <IoSettingsSharp className="text-lg" />
+            </Button>
+          )}
+          {isLogined ? (
+            <SignOut />
+          ) : (
+            <Link href="/login" className="underline text-foreground-50">
+              Login
+            </Link>
+          )}
         </NavbarContent>
         <NavbarMenu>
           {contextValues.topics.map((item) => (

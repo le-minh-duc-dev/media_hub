@@ -32,7 +32,8 @@ export default function Admin() {
         <h2 className="font-semibold mb-4">Các hành động</h2>
         <div className="w-full  border-2 border-foreground-500 rounded-lg p-4 flex gap-4 flex-wrap">
           <Button
-            className="bg-blue-500/25 text-blue-300"
+            variant="flat"
+            color="primary"
             onPress={() => {
               fetchCreateDailyPost()
             }}
@@ -40,7 +41,8 @@ export default function Admin() {
             Tạo bài viết mỗi ngày
           </Button>
           <Button
-            className="bg-blue-500/25 text-blue-300"
+            variant="flat"
+            color="primary"
             onPress={() => {
               wrapperFn(revalidateDailyPost)
             }}
@@ -48,7 +50,8 @@ export default function Admin() {
             Làm mới bài viết mỗi ngày (xóa cache)
           </Button>
           <Button
-            className="bg-blue-500/25 text-blue-300"
+            variant="flat"
+            color="primary"
             onPress={() => {
               wrapperFn(revalidatePost)
             }}
@@ -56,7 +59,8 @@ export default function Admin() {
             Làm mới các bài viết (xóa cache)
           </Button>
           <Button
-            className="bg-blue-500/25 text-blue-300"
+            variant="flat"
+            color="primary"
             onPress={() => {
               wrapperFn(revalidateGirl)
             }}
@@ -64,7 +68,8 @@ export default function Admin() {
             Làm mới các girl xinh (xóa cache)
           </Button>
           <Button
-            className="bg-blue-500/25 text-blue-300"
+            variant="flat"
+            color="primary"
             onPress={() => {
               wrapperFn(revalidateTopic)
             }}
