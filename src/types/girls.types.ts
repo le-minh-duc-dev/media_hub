@@ -11,7 +11,7 @@ export interface GirlSearchParams {
   topic?: string
 }
 export type GirlType = {
-  _id: string | ObjectId
+  _id?: string | ObjectId 
   name: string
   param: string
   description: string

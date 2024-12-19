@@ -76,3 +76,7 @@ export function getOnlyPrivatePost(
   searchParams.isPrivate = true
   return getPost(searchParams, isFindOne)
 }
+
+export async function checkPostExists(searchParams: PostSearchParams = {}) {
+  return (await getPost(searchParams, true)) != null
+}

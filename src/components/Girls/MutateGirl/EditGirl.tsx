@@ -1,17 +1,29 @@
-'use client'
+"use client"
 import React from "react"
 import MutateGirl from "./MutateGirl"
 import { uploadFile } from "@/services/media/clientService"
-import { createGirl } from "@/serverActions/girls"
+import { updateGirl } from "@/serverActions/girls"
 import { GirlType } from "@/types/girls.types"
 
-export default function CreateGirl(props: { topics: string }) {
+export default function EditGirl(
+  props: Readonly<{
+    topics: string
+    initialGirl: string
+  }>
+) {
   return (
     <MutateGirl
+      initialGirl={props.initialGirl}
       topics={props.topics}
-      onSubmit={async (data, setSubmitting, setUploadPercentage, girlFile) => {
+      onSubmit={async (
+        data,
+        setSubmitting,
+        setUploadPercentage,
+        girlFile,
+        _id
+      ) => {
         const submitData: GirlType = { ...data }
-
+        const oldUrl = submitData.url
         setUploadPercentage(0)
         setSubmitting(true)
 
@@ -30,7 +42,7 @@ export default function CreateGirl(props: { topics: string }) {
             console.error("Uploading the file failed! : " + girlFile.name)
           }
         }
-        const result = await createGirl(submitData)
+        const result = await updateGirl(_id!, submitData, oldUrl)
         setSubmitting(false)
         if (result?.message) alert(result.message)
       }}

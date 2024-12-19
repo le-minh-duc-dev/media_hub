@@ -1,10 +1,11 @@
 import { GirlType } from "@/types/girls.types"
-import { Divider, Image } from "@nextui-org/react"
+import { Divider, Image, Tooltip } from "@nextui-org/react"
+import Link from "next/link"
 import React from "react"
-import { FaCheckCircle } from "react-icons/fa"
+import { FaCheckCircle, FaRegEdit } from "react-icons/fa"
 import { PhotoProvider, PhotoView } from "react-photo-view"
 
-export default function Bio({girl}:Readonly<{girl:GirlType}>) {
+export default function Bio({ girl }: Readonly<{ girl: GirlType }>) {
   return (
     <div className="grid lg:grid-cols-2 gap-6 gap-x-12">
       <PhotoProvider>
@@ -26,7 +27,17 @@ export default function Bio({girl}:Readonly<{girl:GirlType}>) {
           😍😘💕
         </div>
         <Divider className="my-4" />
-        <h2 className="text-xl mb-4">Giới thiệu:</h2>
+        <div className="text-xl mb-4 flex items-center">
+          Giới thiệu:{" "}
+          <Tooltip content="Chỉnh sửa girl xinh">
+            <Link
+              className="  h-11 flex justify-center items-center aspect-square"
+              href={`/admin/girls/edit/${girl.param}`}
+            >
+              <FaRegEdit className="text-lg" />
+            </Link>
+          </Tooltip>
+        </div>
         <div
           className="shrink"
           dangerouslySetInnerHTML={{ __html: girl.description }}

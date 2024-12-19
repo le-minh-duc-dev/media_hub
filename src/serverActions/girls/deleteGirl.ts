@@ -1,24 +1,31 @@
 "use server"
 import { protectUpdateContentPage } from "@/authentication/protect"
 import { dbConnect } from "@/database/connect"
+import { getGirl, deleteGirl as deleteGirlService } from "@/services/girls"
 import { deleteMediaByURLs } from "@/services/media/mediaService"
-import { deletePost as deletePostService, getPost } from "@/services/posts"
-import { PostType } from "@/types/posts.types"
+import { checkPostExists } from "@/services/posts"
+import { GirlType } from "@/types/girls.types"
 import mongoose from "mongoose"
 
-export async function deleteGirl(param:string) {
+export async function deleteGirl(param: string) {
   await protectUpdateContentPage()
- 
   let aborted = false
+  const girl: GirlType = await getGirl({ param }, true)
+  const IsSomePostUsingThisGirl = await checkPostExists({
+    girl: girl._id?.toString(),
+  })
+  if (IsSomePostUsingThisGirl) {
+    return { message: "Có bài viết sử dụng girl xinh này, không thể xóa!" }
+  }
   await dbConnect()
   const DBsession = await mongoose.startSession()
   try {
     DBsession.startTransaction()
-    const post:PostType = await getPost({param},true)
+
     //create postcreatePost
-    const result = await deletePostService(param,false,DBsession)
-    if(result.deletedCount>0){
-        deleteMediaByURLs(post.body.map((bodyItem) => bodyItem.url))
+    const result = await deleteGirlService(param, false, DBsession)
+    if (result.deletedCount > 0) {
+      deleteMediaByURLs([girl.url])
     }
     //commit
     await DBsession.commitTransaction()
@@ -30,6 +37,7 @@ export async function deleteGirl(param:string) {
   } finally {
     DBsession.endSession()
   }
-  if (aborted) return { message: "Có lỗi xảy ra! Không thể xóa bài viết ngay lúc này!" }
-  return { message: "Xóa bài viết thành công" }
+  if (aborted)
+    return { message: "Có lỗi xảy ra! Không thể xóa girl xinh ngay lúc này!" }
+  return { message: "Xóa girl xinh thành công" }
 }

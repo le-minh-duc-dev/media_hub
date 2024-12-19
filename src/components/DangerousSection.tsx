@@ -1,4 +1,3 @@
-
 import {
   Accordion,
   AccordionItem,
@@ -14,8 +13,17 @@ import {
 } from "@nextui-org/react"
 import React, { useState } from "react"
 
-const confirmKey = "Delete this post"
-export default function DangerousSection({ param, deleteFn,triggerButtonName }: { param: string, deleteFn:(param:string)=>Promise<{message:string}>,triggerButtonName:string }) {
+export default function DangerousSection({
+  param,
+  deleteFn,
+  triggerButtonName,
+  confirmKey = "Delete it for me!",
+}: Readonly<{
+  param: string
+  deleteFn: (param: string) => Promise<{ message: string }>
+  triggerButtonName: string
+  confirmKey?: string
+}>) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [confirmText, setConfirmText] = useState("")
   const [submitting, setSubmitting] = useState(false)
@@ -34,7 +42,7 @@ export default function DangerousSection({ param, deleteFn,triggerButtonName }: 
           title="Khu vực nguy hiểm"
         >
           <Button onPress={onOpen} color="danger">
-           {triggerButtonName}
+            {triggerButtonName}
           </Button>
           <Modal
             isOpen={isOpen}

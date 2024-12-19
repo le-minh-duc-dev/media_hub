@@ -1,2 +1,5 @@
 export * from "./getGirl"
 export * from "./countGirlList"
+export * from "./createGirl"
+export * from "./updateGirl"
+export * from "./deleteGirl"

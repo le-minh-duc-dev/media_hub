@@ -30,7 +30,7 @@ export default function MutateGirl(
       data: GirlType,
       setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
       setUploadPercentage: React.Dispatch<React.SetStateAction<number>>,
-      girlFile:File | undefined,
+      girlFile: File | undefined,
       _id?: string
     ) => Promise<void>
   }>
@@ -169,17 +169,24 @@ export default function MutateGirl(
           </div>
 
           {/* FilePicker */}
-          <div className="flex gap-x-4">
-            <FilePicker
-              multiple={false}
-              isDisabled={submitting}
-              onPick={(localfiles) => {
-                if (localfiles.length > 0) {
-                  setGirlFile(localfiles[0].file)
-                }
-              }}
-            />
-            <ImageItem url={initialGirl?.url} file={girlFile} />
+          <div className="flex gap-x-4 ">
+            <div className="w-48">
+              <FilePicker
+                allowedTypes={["image/*"]}
+                multiple={false}
+                isDisabled={submitting}
+                onPick={(localfiles) => {
+                  if (localfiles.length > 0) {
+                    setGirlFile(localfiles[0].file)
+                  }
+                }}
+              />
+            </div>
+            <div className="w-48">
+              {(initialGirl?.url || girlFile) && (
+                <ImageItem url={initialGirl?.url} file={girlFile} />
+              )}
+            </div>
           </div>
           {/* Submit Button */}
           <Button
