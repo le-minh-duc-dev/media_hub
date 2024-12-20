@@ -83,6 +83,20 @@ export async function getNoCachePost(
         preserveNullAndEmptyArrays: true,
       },
     },
+    {
+      $lookup: {
+        from: "topics",
+        localField: "girl.topic",
+        foreignField: "_id",
+        as: "girl.topic",
+      },
+    },
+    {
+      $unwind: {
+        path: "$girl.topic",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
   ]
   if (isFindOne) {
     pipeline.push({ $limit: 1 })

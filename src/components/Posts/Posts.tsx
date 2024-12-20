@@ -7,23 +7,33 @@ import {
   Breadcrumbs,
   Input,
   Pagination,
+  Switch,
 } from "@nextui-org/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { IoSearchSharp } from "react-icons/io5"
 import Link from "next/link"
+import { FaCrown } from "react-icons/fa"
+import { useSession } from "next-auth/react"
 
 export default function Posts(props: { posts: string; totalPages: number }) {
+  const session = useSession()
   const posts: PostType[] = useMemo(() => JSON.parse(props.posts), [props])
   const searchParams = useSearchParams()
   const page = !isNaN(parseInt(searchParams.get("page") ?? "1"))
     ? parseInt(searchParams.get("page") ?? "1")
     : 1
   const search = searchParams.get("search") ?? ""
+  const isPrivate = searchParams.get("isPrivate") ?? ""
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
+
   function onSubmit(e: FormEvent) {
     e.preventDefault()
-    router.push(`/posts?page=${page}&search=${inputRef.current!.value}`)
+    router.push(
+      `/posts?page=${page}&search=${
+        inputRef.current!.value
+      }&isPrivate=${isPrivate}`
+    )
   }
   return (
     <div className=" mt-12">
@@ -36,11 +46,11 @@ export default function Posts(props: { posts: string; totalPages: number }) {
         </BreadcrumbItem>
       </Breadcrumbs>
       <h1 className="text-3xl font-semibold mt-12">Tất cả bài viết</h1>
-      <div className="max-w-96 my-12">
-        <form onSubmit={onSubmit}>
+      <div className=" my-12 ">
+        <form onSubmit={onSubmit} className="max-w-96 flex gap-x-6">
           <Input
             ref={inputRef}
-            isClearable
+            defaultValue={search}
             classNames={{
               label: "text-black/50 dark:text-white/90",
               input: [
@@ -62,18 +72,36 @@ export default function Posts(props: { posts: string; totalPages: number }) {
                 "!cursor-text",
               ],
             }}
-            label="Search"
-            placeholder="Type to search..."
+            label="Tìm kiếm bài viết"
+            // placeholder="Gõ tên bài viết"
             radius="lg"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               if (e.target.value == "") {
                 router.push(
-                  `/posts?page=${page}&search=${inputRef.current!.value}`
+                  `/posts?page=${page}&search=${
+                    inputRef.current!.value
+                  }&isPrivate=${isPrivate}`
                 )
               }
             }}
             startContent={<IoSearchSharp />}
           />
+          {session.data?.user.canAccessVipContent && (
+            <Switch
+              isSelected={isPrivate == "true"}
+              onValueChange={(value) => {
+                router.push(
+                  `/posts?page=${page}&search=${
+                    inputRef.current!.value
+                  }&isPrivate=${value}`
+                )
+              }}
+            >
+              <div className="flex gap-x-2 items-center">
+                VIP <FaCrown className="text-yellow-500 text-xl" />
+              </div>
+            </Switch>
+          )}
         </form>
       </div>
 

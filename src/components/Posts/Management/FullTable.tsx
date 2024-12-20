@@ -108,8 +108,8 @@ export default function FullTable({
         inputSearch={inputSearch}
         setInputSearch={setInputSearch}
         router={router}
-        createButtonName="Tạo girl xinh"
-        createPageLink="/admin/girls/create"
+        createButtonName="Tạo bài viết"
+        createPageLink="/admin/posts/create"
       />
       <Table
         aria-label="Example static collection table"
