@@ -70,7 +70,7 @@ function Form({
         placeholder={placeholder}
         size="sm"
         startContent={<IoSearchSharp />}
-        type="search"
+        type="text"
       />
     </form>
   )

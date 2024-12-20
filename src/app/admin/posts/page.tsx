@@ -45,7 +45,7 @@ export default async function page({
     sort_created,
     sort_views,
   })
-  const totalPosts = await countPostList()
+  const totalPosts = await countPostList({ search })
   const totalPages = Math.ceil(totalPosts / limit)
   return (
     <ManagePost

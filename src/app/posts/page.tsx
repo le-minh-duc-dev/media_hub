@@ -15,7 +15,7 @@ export default async function page({
   const page = !isNaN(parsedPage) ? parsedPage : 1
   const search = (await searchParams).search as string | undefined
   const isPrivate =
-    ((await searchParams).isPrivate as string | undefined) == "true"
+    ((await searchParams).isPrivate as string | undefined) == "true"?true:undefined
   const posts = session?.user.canAccessVipContent
     ? await getPost({ limit, page, search, isPrivate })
     : await getOnlyPublicPost({ limit, page, search })

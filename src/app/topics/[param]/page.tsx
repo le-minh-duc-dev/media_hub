@@ -22,6 +22,9 @@ export default async function page({
   const session = await auth()
   const parsedPage = parseInt((await searchParams).page as string)
   const page = !isNaN(parsedPage) ? parsedPage : 1
+  const search = (await searchParams).search as string | undefined
+  const isPrivate =
+    ((await searchParams).isPrivate as string | undefined) == "true"?true:undefined
   const limit = 16
   const param = (await params).param
   // await wait(1000*1000)
@@ -34,17 +37,20 @@ export default async function page({
         topic: topic._id!.toString(),
         page,
         limit,
+        search,
+        isPrivate,
       })
     : await getOnlyPublicGirl({
         topic: topic._id!.toString(),
         page,
         limit,
+        search,
       })
 
-  console.log(relatedGirls)
+  // console.log(relatedGirls)
   const totalGirls = session?.user.canAccessVipContent
-    ? await countGirlList({ topic: topic._id!.toString() })
-    : await countOnlyPublicGirlList({ topic: topic._id!.toString() })
+    ? await countGirlList({ topic: topic._id!.toString(), search, isPrivate })
+    : await countOnlyPublicGirlList({ topic: topic._id!.toString(), search })
   const totalPages = Math.ceil(totalGirls / limit)
 
   return (

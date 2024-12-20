@@ -17,10 +17,10 @@ export default async function Page({
 
   const relatedPosts = session?.user.canAccessVipContent
     ? await getPost({
-        girl: (post.girl as GirlType)._id.toString(),
+        girl: (post.girl as GirlType)._id!.toString(),
       })
     : await getOnlyPublicPost({
-        girl: (post.girl as GirlType)._id.toString(),
+        girl: (post.girl as GirlType)._id!.toString(),
       })
 
   return (

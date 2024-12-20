@@ -42,7 +42,7 @@ export default async function page({
     false,
     true
   )
-  const totalTopics = await countTopicList()
+  const totalTopics = await countTopicList({ search })
   const totalPages = Math.ceil(totalTopics / limit)
   return (
     <ManageTopics

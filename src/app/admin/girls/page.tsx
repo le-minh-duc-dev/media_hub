@@ -42,7 +42,7 @@ export default async function page({
     false,
     true
   )
-  const totalGirls = await countGirlList()
+  const totalGirls = await countGirlList({  search })
   const totalPages = Math.ceil(totalGirls / limit)
   return (
     <ManageGirl

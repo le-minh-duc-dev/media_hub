@@ -38,11 +38,11 @@ export async function getGirlNoCache(
     sort_level,
   } = searchParams
 
-  let query: Record<string, unknown> = {}
+  const query: Record<string, unknown> = {}
   if (param) query.param = param
   if (topic) query.topic = new mongoose.Types.ObjectId(topic)
   if (isPrivate !== undefined) query.isPrivate = isPrivate
-  if (search) query = { name: { $regex: search, $options: "i" } }
+  if (search) query.name = { $regex: search, $options: "i" }
   const validatedLimit = limit > 0 ? limit : DEFAULT_LIMIT
   const validatedPage = page > 0 ? page : DEFAULT_PAGE
 

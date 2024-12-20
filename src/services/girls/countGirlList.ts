@@ -18,11 +18,11 @@ export async function countGirlListNoCache(
 
   const { topic, isPrivate, search } = searchParams
 
-  let query: Record<string, unknown> = {}
+  const query: Record<string, unknown> = {}
 
   if (topic) query.topic = topic
   if (isPrivate !== undefined) query.isPrivate = isPrivate
-  if (search) query = { $text: { $search: search } }
+  if (search) query.name = { $regex: search, $options: "i" }
   // console.log(query)
   const count = await Girl.countDocuments(query)
   return count
