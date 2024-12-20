@@ -60,7 +60,7 @@ export async function getGirlNoCache(
   if (!sort_updated && !sort_level && !sort_created) {
     sortFields["updatedAt"] = DEFAULT_SORT
   }
-  console.log(sortFields);
+  console.log(sortFields)
   // Base pipeline
   const pipeline: PipelineStage[] = [
     { $match: query },
@@ -69,6 +69,20 @@ export async function getGirlNoCache(
     },
     { $skip: (validatedPage - 1) * validatedLimit },
     { $limit: validatedLimit },
+    {
+      $lookup: {
+        from: "topics", 
+        localField: "topic", 
+        foreignField: "_id",
+        as: "topic",
+      },
+    },
+    {
+      $unwind: {
+        path: "$topic",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
   ]
 
   // Conditionally add lookup and numOfPosts logic

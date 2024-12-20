@@ -1,9 +1,8 @@
 import { dbConnect } from "@/database/connect"
 import Post from "@/database/models/Post"
 import { PostType } from "@/types/posts.types"
-import { revalidateTag } from "next/cache"
-import { GET_POST_TAG } from "./getPost"
 import mongoose from "mongoose"
+import { revalidatePostTags } from "./revalidatePostTags"
 
 export async function updatePost(
   _id: string,
@@ -30,6 +29,6 @@ export async function updatePost(
       session,
     }
   )
-  revalidateTag(GET_POST_TAG)
+  revalidatePostTags()
   return result
 }

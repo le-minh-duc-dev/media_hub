@@ -6,27 +6,24 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  User,
   Chip,
   Tooltip,
-  Image,
   Pagination,
   SortDescriptor,
 } from "@nextui-org/react"
 import { RiEditLine } from "react-icons/ri"
-import { GirlType } from "@/types/girls.types"
 import { TopicType } from "@/types/topics.types"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { formatDateTime } from "@/lib/utils"
 const columns = [
   {
-    label: "Girl xinh",
-    key: "girl",
+    label: "Chủ đề",
+    key: "topic",
   },
   {
-    label: "Số lượng bài viết",
-    key: "numOfPosts",
+    label: "Số lượng topic xinh",
+    key: "numOfGirls",
   },
   {
     label: "Cấp độ",
@@ -43,10 +40,10 @@ const columns = [
 ]
 const sortableColumns = ["createdAt", "level"]
 export default function FullTable({
-  girls,
+  topics,
   totalPages,
 }: Readonly<{
-  girls: GirlType[]
+  topics: TopicType[]
   totalPages: number
 }>) {
   const searchParams = useSearchParams()
@@ -70,59 +67,47 @@ export default function FullTable({
       : -1
     : undefined
   //
-  //createdAt
-  const parsedUpdatedAt = parseInt(searchParams.get("sort_updated") as string)
-  const sort_updated = !isNaN(parsedUpdatedAt)
-    ? parsedUpdatedAt == 1
-      ? 1
-      : -1
-    : undefined
+  // //createdAt
+  // const parsedUpdatedAt = parseInt(searchParams.get("sort_updated") as string)
+  // const sort_updated = !isNaN(parsedUpdatedAt)
+  //   ? parsedUpdatedAt == 1
+  //     ? 1
+  //     : -1
+  //   : undefined
   //
   //search
   const search = searchParams.get("search") ?? ""
   //
   const router = useRouter()
-  const renderCell = React.useCallback((girl: GirlType, columnKey: Key) => {
+  const renderCell = React.useCallback((topic: TopicType, columnKey: Key) => {
     switch (columnKey) {
-      case "girl":
-        return (
-          <Tooltip
-            content={<Image src={girl.url} alt={girl.name} width={300} />}
-          >
-            <User
-              avatarProps={{ radius: "lg", src: girl.url }}
-              description={girl.name}
-              name={girl.name}
-            >
-              {(girl.topic as TopicType)?.name}
-            </User>
-          </Tooltip>
-        )
-      case "numOfPosts":
+      case "topic":
+        return <p>{topic.name}</p>
+      case "numOfGirls":
         return (
           <div className="flex flex-col ">
-            <p className="text-bold text-sm ">{girl.numOfPosts ?? 0}</p>
+            <p className="text-bold text-sm ">{topic.numOfGirls ?? 0}</p>
           </div>
         )
       case "level":
         return (
           <Chip
             className="capitalize"
-            color={girl.isPrivate ? "primary" : "default"}
+            color={topic.isPrivate ? "primary" : "default"}
             size="sm"
             variant="flat"
           >
-            {girl.isPrivate ? "VIP" : "Public"}
+            {topic.isPrivate ? "VIP" : "Public"}
           </Chip>
         )
       case "createdAt":
-        return <div className="">{formatDateTime(girl.createdAt!)}</div>
+        return <div className="">{formatDateTime(topic.createdAt!)}</div>
       case "actions":
         return (
           <div className="relative flex items-center justify-center gap-2">
-            <Tooltip content="Cập nhật girl xinh">
+            <Tooltip content="Cập nhật topic">
               <Link
-                href={`/admin/girls/edit/${girl.param}`}
+                href={`/admin/topics/edit/${topic.param}`}
                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
               >
                 <RiEditLine />
@@ -142,25 +127,17 @@ export default function FullTable({
     switch (sortDescriptor.column) {
       case "createdAt":
         router.push(
-          `/admin/girls?page=${page}&search=${search}&sort_created=${direction}`
+          `/admin/topics?page=${page}&search=${search}&sort_created=${direction}`
         )
         break
 
       case "level":
         router.push(
-          `/admin/girls?page=${page}&search=${search}&sort_level=${direction}`
+          `/admin/topics?page=${page}&search=${search}&sort_level=${direction}`
         )
         break
     }
-  }, [
-    sortDescriptor,
-    page,
-    search,
-    sort_updated,
-    sort_created,
-    router,
-    sort_level,
-  ])
+  }, [sortDescriptor, page, search, sort_created, router, sort_level])
 
   return (
     <Table
@@ -175,7 +152,7 @@ export default function FullTable({
             initialPage={page}
             onChange={(page) =>
               router.push(
-                `/admin/girls?page=${page}&search=${search}&sort_created=${sort_created}&sort_level=${sort_level}&sort_updated=${sort_updated}`
+                `/admin/topics?page=${page}&search=${search}&sort_created=${sort_created}&sort_level=${sort_level}`
               )
             }
             total={totalPages}
@@ -195,7 +172,7 @@ export default function FullTable({
           </TableColumn>
         ))}
       </TableHeader>
-      <TableBody emptyContent={"No girls to display."} items={girls}>
+      <TableBody emptyContent={"No topics to display."} items={topics}>
         {(item) => (
           <TableRow key={item._id?.toString()}>
             {(columnKey) => (

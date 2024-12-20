@@ -1,9 +1,8 @@
 import { dbConnect } from "@/database/connect"
 import Post from "@/database/models/Post"
 import { PostType } from "@/types/posts.types"
-import { revalidateTag } from "next/cache"
-import { GET_POST_TAG } from "./getPost"
 import mongoose from "mongoose"
+import { revalidatePostTags } from "./revalidatePostTags"
 
 export async function createPost(
   { title, param, description, girl, isPrivate, user, view, body }: PostType,
@@ -23,6 +22,6 @@ export async function createPost(
     await dbConnect()
   }
   await newPost.save({session})
-  revalidateTag(GET_POST_TAG)
+  revalidatePostTags()
   return newPost
 }

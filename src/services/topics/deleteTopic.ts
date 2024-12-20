@@ -1,9 +1,8 @@
 import { dbConnect } from "@/database/connect"
 import Topic from "@/database/models/Topic"
-import { revalidateTag } from "next/cache"
 
 import mongoose from "mongoose"
-import { GET_TOPIC_TAG } from "./getTopic"
+import { revalidateTopicTags } from "./revalidateTopicTags"
 
 export async function deleteTopic(
   param: string,
@@ -14,6 +13,6 @@ export async function deleteTopic(
     await dbConnect()
   }
   const result = await Topic.deleteOne({ param }, { session })
-  revalidateTag(GET_TOPIC_TAG)
+  revalidateTopicTags()
   return result
 }

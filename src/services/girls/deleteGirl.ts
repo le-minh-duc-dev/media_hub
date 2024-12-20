@@ -1,8 +1,7 @@
 import { dbConnect } from "@/database/connect"
-import { revalidateTag } from "next/cache"
 import mongoose from "mongoose"
-import { GET_GIRL_TAG } from "./getGirl"
 import Girl from "@/database/models/Girl"
+import { revalidateGirlTags } from "./revalidateGirlTags"
 
 export async function deleteGirl(
   param: string,
@@ -13,6 +12,6 @@ export async function deleteGirl(
     await dbConnect()
   }
   const result = await Girl.deleteOne({ param }, { session })
-  revalidateTag(GET_GIRL_TAG)
+  revalidateGirlTags()
   return result
 }

@@ -1,8 +1,7 @@
 import { dbConnect } from "@/database/connect"
 import Post from "@/database/models/Post"
-import { revalidateTag } from "next/cache"
-import { GET_POST_TAG } from "./getPost"
 import mongoose from "mongoose"
+import { revalidatePostTags } from "./revalidatePostTags"
 
 export async function deletePost(
   param: string,
@@ -13,6 +12,6 @@ export async function deletePost(
     await dbConnect()
   }
   const result = await Post.deleteOne({ param }, { session })
-  revalidateTag(GET_POST_TAG)
+  revalidatePostTags()
   return result
 }

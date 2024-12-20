@@ -1,9 +1,9 @@
 import { dbConnect } from "@/database/connect"
 import Girl from "@/database/models/Girl"
 import { GirlType } from "@/types/girls.types"
-import { revalidateTag } from "next/cache"
-import { GET_GIRL_TAG } from "./getGirl"
+
 import mongoose from "mongoose"
+import { revalidateGirlTags } from "./revalidateGirlTags"
 
 export async function updateGirl(
   _id: string,
@@ -21,6 +21,6 @@ export async function updateGirl(
       session,
     }
   )
-  revalidateTag(GET_GIRL_TAG)
+  revalidateGirlTags()
   return result
 }

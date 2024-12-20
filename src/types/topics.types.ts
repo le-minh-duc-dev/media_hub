@@ -1,6 +1,9 @@
 import { ObjectId, SortOrder } from "mongoose"
 import { UserType } from "./users.types"
 export interface TopicSearchParams {
+  sort_created?: 1 | -1
+  sort_updated?: 1 | -1
+  sort_level?: 1 | -1
   page?: number
   sort?: SortOrder
   param?: string
@@ -16,4 +19,6 @@ export type TopicType = {
   description: string
   isPrivate: boolean
   user: string | UserType
+  numOfGirls?: number
+  createdAt?: string
 }

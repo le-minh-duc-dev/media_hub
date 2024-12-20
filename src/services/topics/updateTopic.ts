@@ -1,9 +1,8 @@
 import { dbConnect } from "@/database/connect"
 import Topic from "@/database/models/Topic"
 import { TopicType } from "@/types/topics.types"
-import { revalidateTag } from "next/cache"
 import mongoose from "mongoose"
-import { GET_TOPIC_TAG } from "./getTopic"
+import { revalidateTopicTags } from "./revalidateTopicTags"
 
 export async function updateTopic(
   _id: string,
@@ -21,6 +20,7 @@ export async function updateTopic(
       session,
     }
   )
-  revalidateTag(GET_TOPIC_TAG)
+  revalidateTopicTags()
+
   return result
 }
