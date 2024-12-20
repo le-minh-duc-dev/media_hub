@@ -1,8 +1,7 @@
 import { dbConnect } from "@/database/connect"
 import Post from "@/database/models/Post"
 import { PostSearchParams } from "@/types/posts.types"
-import { PopulateOptions } from "mongoose"
-import { populateConfig as sample } from "./config"
+import mongoose, { PipelineStage } from "mongoose"
 import { unstable_cache } from "next/cache"
 
 export const GET_POST_TAG = "posts"
@@ -28,7 +27,10 @@ export async function getNoCachePost(
     search,
     limit = DEFAULT_LIMIT,
     page = DEFAULT_PAGE,
-    sort = DEFAULT_SORT,
+    sort_created,
+    sort_updated,
+    sort_level,
+    sort_views,
   }: PostSearchParams = {},
   isFindOne = false
 ) {
@@ -36,28 +38,57 @@ export async function getNoCachePost(
   // Construct the query object
   let query: Record<string, unknown> = {}
   if (param) query.param = param
-  if (girl) query.girl = girl
+  if (girl) query.girl = new mongoose.Types.ObjectId(girl)
   if (isPrivate !== undefined) query.isPrivate = isPrivate
-  if (search) query = { $text: { $search: search } }
+  if (search) query = { title: { $regex: search, $options: "i" } }
 
   // Validate and sanitize pagination and sorting
   const validatedLimit = limit > 0 ? limit : DEFAULT_LIMIT
   const validatedPage = page > 0 ? page : DEFAULT_PAGE
-  const validatedSort = sort
 
-  // Define the populate configuration
-  const populateConfig: PopulateOptions = {
-    ...sample,
+  const sortFields: Record<string, 1 | -1> = {}
+  if (sort_created) {
+    sortFields["createdAt"] = sort_created
   }
-  const postList = !isFindOne
-    ? await Post.find(query)
-        .sort({ updatedAt: validatedSort })
-        .skip((validatedPage - 1) * validatedLimit)
-        .limit(validatedLimit)
-        .populate(populateConfig)
-    : await Post.findOne(query).populate(populateConfig)
-
-  return postList
+  if (sort_level) {
+    sortFields["isPrivate"] = sort_level
+  }
+  if (sort_updated) {
+    sortFields["updatedAt"] = sort_updated
+  }
+  if (sort_views) {
+    sortFields["view"] = sort_views
+  }
+  if (!sort_updated && !sort_level && !sort_created && !sort_views) {
+    sortFields["updatedAt"] = DEFAULT_SORT
+  }
+  const pipeline: PipelineStage[] = [
+    { $match: query },
+    {
+      $sort: sortFields,
+    },
+    { $skip: (validatedPage - 1) * validatedLimit },
+    { $limit: validatedLimit },
+    {
+      $lookup: {
+        from: "girls",
+        localField: "girl",
+        foreignField: "_id",
+        as: "girl",
+      },
+    },
+    {
+      $unwind: {
+        path: "$girl",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ]
+  if (isFindOne) {
+    pipeline.push({ $limit: 1 })
+  }
+  const posts = await Post.aggregate(pipeline)
+  return isFindOne ? posts[0] || null : posts
 }
 
 export function getOnlyPublicPost(

@@ -9,16 +9,17 @@ import {
   Pagination,
   SortDescriptor,
 } from "@nextui-org/react"
-import { GirlType } from "@/types/girls.types"
+
 import { useRouter, useSearchParams } from "next/navigation"
 import { renderCell } from "./RenderCell"
 import { columns, sortableColumns } from "./columns"
 import TableSearch from "@/components/TableSearch"
+import { PostType } from "@/types/posts.types"
 export default function FullTable({
-  girls,
+  posts,
   totalPages,
 }: Readonly<{
-  girls: GirlType[]
+  posts: PostType[]
   totalPages: number
 }>) {
   const searchParams = useSearchParams()
@@ -42,14 +43,15 @@ export default function FullTable({
       : -1
     : undefined
   //
-  //createdAt
-  const parsedUpdatedAt = parseInt(searchParams.get("sort_updated") as string)
-  const sort_updated = !isNaN(parsedUpdatedAt)
-    ? parsedUpdatedAt == 1
+  //sort_views
+  const parsedViews = parseInt(searchParams.get("sort_views") as string)
+  const sort_views = !isNaN(parsedViews)
+    ? parsedViews == 1
       ? 1
       : -1
     : undefined
   //
+
   //search
   const search = searchParams.get("search") ?? ""
   //input search
@@ -67,13 +69,18 @@ export default function FullTable({
     switch (sortDescriptor.column) {
       case "createdAt":
         router.push(
-          `/admin/girls?page=${page}&search=${search}&sort_created=${direction}`
+          `/admin/posts?page=${page}&search=${search}&sort_created=${direction}`
         )
         break
 
       case "level":
         router.push(
-          `/admin/girls?page=${page}&search=${search}&sort_level=${direction}`
+          `/admin/posts?page=${page}&search=${search}&sort_level=${direction}`
+        )
+        break
+      case "views":
+        router.push(
+          `/admin/posts?page=${page}&search=${search}&sort_views=${direction}`
         )
         break
     }
@@ -81,16 +88,17 @@ export default function FullTable({
     sortDescriptor,
     page,
     search,
-    sort_updated,
+
+    sort_views,
     sort_created,
     router,
     sort_level,
   ])
   const onSearch = (clear?: boolean) => {
     router.push(
-      `/admin/girls?page=${page}&search=${
+      `/admin/posts?page=${page}&search=${
         clear ? "" : inputSearch
-      }&sort_created=${sort_created}&sort_level=${sort_level}`
+      }&sort_created=${sort_created}&sort_level=${sort_level}&sort_views=${sort_views}`
     )
   }
   return (
@@ -115,7 +123,7 @@ export default function FullTable({
               initialPage={page}
               onChange={(page) =>
                 router.push(
-                  `/admin/girls?page=${page}&search=${search}&sort_created=${sort_created}&sort_level=${sort_level}&sort_updated=${sort_updated}`
+                  `/admin/posts?page=${page}&search=${search}&sort_created=${sort_created}&sort_level=${sort_level}&sort_views=${sort_views}`
                 )
               }
               total={totalPages}
@@ -135,7 +143,7 @@ export default function FullTable({
             </TableColumn>
           ))}
         </TableHeader>
-        <TableBody emptyContent={"No girls to display."} items={girls}>
+        <TableBody emptyContent={"No girls to display."} items={posts}>
           {(item) => (
             <TableRow key={item._id?.toString()}>
               {(columnKey) => (

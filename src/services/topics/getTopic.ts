@@ -40,7 +40,7 @@ export async function getTopicNoCache(
   let query: Record<string, unknown> = {}
   if (param) query.param = param
   if (isPrivate !== undefined) query.isPrivate = isPrivate
-  if (search) query = { $text: { $search: search } }
+  if (search) query = { name: { $regex: search, $options: "i" } }
 
   const validatedLimit = limit > 0 ? limit : DEFAULT_LIMIT
   const validatedPage = page > 0 ? page : DEFAULT_PAGE

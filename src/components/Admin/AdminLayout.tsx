@@ -17,7 +17,7 @@ export default function AdminLayout({
         </h3>
         <Tabs
           classNames={{
-            tab:"p-0"
+            tab: "p-0",
           }}
           aria-label="Dynamic tabs"
           isVertical
@@ -25,19 +25,35 @@ export default function AdminLayout({
         >
           <Tab
             key="/admin"
-            title={<Link href={`/admin`} className="block h-full px-2">Thiết lập chung</Link>}
+            title={
+              <Link href={`/admin`} className="block h-full px-2">
+                Thiết lập chung
+              </Link>
+            }
           ></Tab>
           <Tab
-            key="/admin/posts/create"
-            title={<Link href={`/admin/posts/create`} className="block h-full px-2">Tạo bài viết</Link>}
+            key="/admin/posts"
+            title={
+              <Link href={`/admin/posts`} className="block h-full px-2">
+                Quản lý bài viết
+              </Link>
+            }
           ></Tab>
           <Tab
             key="/admin/girls"
-            title={<Link href={`/admin/girls`} className="block h-full px-2">Quản lý girl xinh</Link>}
+            title={
+              <Link href={`/admin/girls`} className="block h-full px-2">
+                Quản lý girl xinh
+              </Link>
+            }
           ></Tab>
           <Tab
             key="/admin/topics"
-            title={<Link href={`/admin/topics`} className="block h-full px-2">Quản lý chủ đề</Link>}
+            title={
+              <Link href={`/admin/topics`} className="block h-full px-2">
+                Quản lý chủ đề
+              </Link>
+            }
           ></Tab>
         </Tabs>
       </div>

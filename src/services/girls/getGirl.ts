@@ -1,7 +1,7 @@
 import { dbConnect } from "@/database/connect"
 import { GirlSearchParams } from "@/types/girls.types"
 import Girl from "@/database/models/Girl"
-import { PipelineStage } from "mongoose"
+import mongoose, { PipelineStage } from "mongoose"
 import { unstable_cache } from "next/cache"
 
 export const GET_GIRL_TAG = "GET_GIRL_TAG"
@@ -40,10 +40,9 @@ export async function getGirlNoCache(
 
   let query: Record<string, unknown> = {}
   if (param) query.param = param
-  if (topic) query.topic = topic
+  if (topic) query.topic = new mongoose.Types.ObjectId(topic)
   if (isPrivate !== undefined) query.isPrivate = isPrivate
-  if (search) query = { $text: { $search: search } }
-
+  if (search) query = { name: { $regex: search, $options: "i" } }
   const validatedLimit = limit > 0 ? limit : DEFAULT_LIMIT
   const validatedPage = page > 0 ? page : DEFAULT_PAGE
 
@@ -60,7 +59,7 @@ export async function getGirlNoCache(
   if (!sort_updated && !sort_level && !sort_created) {
     sortFields["updatedAt"] = DEFAULT_SORT
   }
-  console.log(sortFields)
+
   // Base pipeline
   const pipeline: PipelineStage[] = [
     { $match: query },
@@ -71,8 +70,8 @@ export async function getGirlNoCache(
     { $limit: validatedLimit },
     {
       $lookup: {
-        from: "topics", 
-        localField: "topic", 
+        from: "topics",
+        localField: "topic",
         foreignField: "_id",
         as: "topic",
       },
@@ -113,7 +112,6 @@ export async function getGirlNoCache(
   if (isFindOne) {
     pipeline.push({ $limit: 1 })
   }
-
   const girls = await Girl.aggregate(pipeline)
   return isFindOne ? girls[0] || null : girls
 }

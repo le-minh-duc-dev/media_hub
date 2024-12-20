@@ -25,23 +25,26 @@ export default async function page({
   const limit = 16
   const param = (await params).param
   // await wait(1000*1000)
-  const topics: TopicType[] = await getTopic({})
+  const topics: TopicType[] = await getTopic()
   const topic = topics.find((t) => t.param.includes(param))
   if (!topic) throw Error()
+  console.log("in topic")
   const relatedGirls: GirlType[] = session?.user.canAccessVipContent
     ? await getGirl({
-        topic: topic._id.toString(),
+        topic: topic._id!.toString(),
         page,
         limit,
       })
     : await getOnlyPublicGirl({
-        topic: topic._id.toString(),
+        topic: topic._id!.toString(),
         page,
         limit,
       })
+
+  console.log(relatedGirls)
   const totalGirls = session?.user.canAccessVipContent
-    ? await countGirlList({ topic: topic._id.toString() })
-    : await countOnlyPublicGirlList({ topic: topic._id.toString() })
+    ? await countGirlList({ topic: topic._id!.toString() })
+    : await countOnlyPublicGirlList({ topic: topic._id!.toString() })
   const totalPages = Math.ceil(totalGirls / limit)
 
   return (

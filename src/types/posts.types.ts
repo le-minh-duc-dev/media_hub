@@ -1,9 +1,12 @@
-import { ObjectId, SortOrder } from "mongoose"
+import { ObjectId } from "mongoose"
 import { UserType } from "./users.types"
 import { GirlType } from "./girls.types"
 export interface PostSearchParams {
+  sort_created?: 1 | -1
+  sort_updated?: 1 | -1
+  sort_level?: 1 | -1
+  sort_views?: 1 | -1
   page?: number
-  sort?: SortOrder
   param?: string
   limit?: number
   search?: string
@@ -15,7 +18,7 @@ export type PostBodyItem = {
   url: string
   description?: string
   file?: File
-  id?:string
+  id?: string
 }
 export interface PostType {
   _id?: string | ObjectId
