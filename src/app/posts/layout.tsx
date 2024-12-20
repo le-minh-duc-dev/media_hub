@@ -11,7 +11,7 @@ export default async function layout({ children }: { children: ReactNode }) {
     : await getOnlyPublicPost({ limit: 10 })
   return (
     <div className="grid md:grid-cols-3 gap-6 gap-x-12">
-      <div className="col-span-2">{children}</div>
+      <div className="col-span-2 relative">{children}</div>
       <div className="mt-12">
         <PostBreadcrumbsFake />
         <div className="mt-12">

@@ -57,7 +57,7 @@ export default function AdminLayout({
           ></Tab>
         </Tabs>
       </div>
-      <div className="mx-48">{children}</div>
+      <div className="mx-48 relative">{children}</div>
     </div>
   )
 }

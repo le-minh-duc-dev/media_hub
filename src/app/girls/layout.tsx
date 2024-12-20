@@ -14,7 +14,7 @@ export default async function layout({
     ? await getPost({ limit: 20, page: 1 })
     : await getOnlyPublicPost({ limit: 20, page: 1 })
   return (
-    <div className="mt-12">
+    <div className="mt-12 relative">
       {children}
       <div className="mt-12">
         <RelatedPosts
