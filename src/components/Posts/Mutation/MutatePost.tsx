@@ -96,7 +96,7 @@ export default function MutatePost(
       initialPost?._id?.toString()
     )
   }
-  console.log(errors)
+  console.log("Errors in form",errors)
   if (!girls) return <div>No girls yet.</div>
   return (
     <div className="mt-12 flex justify-center">

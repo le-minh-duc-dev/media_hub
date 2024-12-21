@@ -38,7 +38,23 @@ export default function ImageItem({
     }
   }, [file, url])
   if (!fileUrl)
-    return <Skeleton className="w-full aspect-square rounded-xl"></Skeleton>
+    return (
+      <div className="w-full aspect-square rounded-lg relative group animate-pulse bg-content2">
+        {" "}
+        <Button
+          isIconOnly
+          radius="full"
+          size="sm"
+          isDisabled={isDisabled}
+          className="absolute top-2 right-2 z-50 bg-black/50 group-hover:flex hidden"
+          onPress={() => {
+            removeFn(id)
+          }}
+        >
+          <IoClose />
+        </Button>
+      </div>
+    )
   return (
     <div className="relative  group">
       <Button
