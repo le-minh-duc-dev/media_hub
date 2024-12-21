@@ -2,13 +2,13 @@
 import { Tab, Tabs } from "@nextui-org/react"
 import Link from "next/link"
 import React, { ReactNode } from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 export default function AdminLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   const currentPath = usePathname()
-
+  const router = useRouter()
   return (
     <div className="mt-12">
       <div className="flex flex-col items-center lg:top-24 top-0">
@@ -19,7 +19,10 @@ export default function AdminLayout({
             base: "w-full w-fit",
           }}
           aria-label="Dynamic tabs"
-          selectedKey={currentPath} // Dynamically set the selected tab based on the current path
+          selectedKey={currentPath}
+          onSelectionChange={(key) => {
+            router.push(key as string)
+          }}
         >
           <Tab
             key="/admin"

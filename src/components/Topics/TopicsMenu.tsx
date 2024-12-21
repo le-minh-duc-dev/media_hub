@@ -2,10 +2,11 @@
 import { TopicType } from "@/types/topics.types"
 import { Tab, Tabs } from "@nextui-org/react"
 import React, { useMemo } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 type TabType = { param: string; name: string }
 export default function TopicsMenu(props: { topics: string }) {
+  const router = useRouter()
   const topics: TopicType[] = useMemo(() => JSON.parse(props.topics), [props])
   const params = useParams()
 
@@ -49,25 +50,16 @@ export default function TopicsMenu(props: { topics: string }) {
       <div className="block md:hidden">
         <Tabs
           aria-label="Dynamic tabs"
-          classNames={{tabList:"grid grid-cols-3 w-full", base:"w-full"}}
+          classNames={{ tabList: "grid grid-cols-3 w-full", base: "w-full" }}
           items={tabs}
           selectedKey={
             (params?.param as string) == "" ? "all" : (params?.param as string)
           }
+          onSelectionChange={(key) => {
+            router.push(`/topics/${key == "all" ? "" : key}`)
+          }}
         >
-          {/* <Tab key="" title="Tất cả"></Tab> */}
-          {(topic) => (
-            <Tab
-              key={topic.param}
-              title={
-                <Link
-                  href={`/topics/${topic.param == "all" ? "" : topic.param}`}
-                >
-                  {topic.name}
-                </Link>
-              }
-            ></Tab>
-          )}
+          {(topic) => <Tab key={topic.param} title={topic.name}></Tab>}
         </Tabs>
       </div>
     </div>
