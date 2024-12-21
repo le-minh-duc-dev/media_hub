@@ -2,7 +2,30 @@ import ManageTopics from "@/components/Topics/Management/ManageTopics"
 import { countTopicList, getTopic } from "@/services/topics"
 import { TopicType } from "@/types/topics.types"
 import React from "react"
-
+import { Metadata } from "next"
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "Quản lý chủ đề"
+  const description = "Chức năng quản lý chủ đề dành riêng cho quản trị viên của " + process.env.NEXT_PUBLIC_SITE_NAME
+  return {
+    title,
+    openGraph: {
+      title,
+      description,
+      url: `/admin/topics`,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      locale: "vi_VN",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      siteId: "admin/topics",
+      creator: process.env.NEXT_PUBLIC_SITE_NAME,
+      creatorId: process.env.NEXT_PUBLIC_SITE_NAME,
+    },
+  }
+}
 export default async function page({
   searchParams,
 }: {

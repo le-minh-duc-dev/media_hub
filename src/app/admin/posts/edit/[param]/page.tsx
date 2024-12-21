@@ -4,7 +4,37 @@ import { getGirl } from "@/services/girls"
 import { getPost } from "@/services/posts"
 import { GirlType } from "@/types/girls.types"
 import { PostType } from "@/types/posts.types"
+import { Metadata } from "next"
+export async function generateMetadata({
+  params,
+}: Readonly<{
+  params: Promise<{ param: string }>
+}>): Promise<Metadata> {
+  const param = (await params).param
 
+  const post = await getPost({ param }, true)
+  const title = post.title
+  const description = post.description ?? post.title
+  return {
+    title,
+    openGraph: {
+      title,
+      description,
+      url: `/admin/posts/edit/${post.param}`,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      locale: "vi_VN",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      siteId: `admin/posts/edit/${post.param}`,
+      creator: process.env.NEXT_PUBLIC_SITE_NAME,
+      creatorId: process.env.NEXT_PUBLIC_SITE_NAME,
+    },
+  }
+}
 export default async function Page({
   params,
 }: {

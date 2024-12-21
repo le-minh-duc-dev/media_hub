@@ -11,7 +11,35 @@ import { getTopic } from "@/services/topics"
 import { GirlType } from "@/types/girls.types"
 import { TopicType } from "@/types/topics.types"
 import React from "react"
+import { Metadata } from "next"
+type Props = {
+  params: Promise<{ param: string }>
+}
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const param = (await params).param
+  const topic: TopicType = await getTopic({ param }, true)
+
+  return {
+    title: topic.name,
+    openGraph: {
+      title: topic.name,
+      description: topic.description ?? topic.name,
+      url: `/topics/${topic.param}`,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      locale: "vi_VN",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: topic.name,
+      description: topic.description ?? topic.name,
+      siteId: topic._id! as string,
+      creator: process.env.NEXT_PUBLIC_SITE_NAME,
+      creatorId: process.env.NEXT_PUBLIC_SITE_NAME,
+    },
+  }
+}
 export default async function page({
   searchParams,
   params,
@@ -24,7 +52,9 @@ export default async function page({
   const page = !isNaN(parsedPage) ? parsedPage : 1
   const search = (await searchParams).search as string | undefined
   const isPrivate =
-    ((await searchParams).isPrivate as string | undefined) == "true"?true:undefined
+    ((await searchParams).isPrivate as string | undefined) == "true"
+      ? true
+      : undefined
   const limit = 16
   const param = (await params).param
   // await wait(1000*1000)

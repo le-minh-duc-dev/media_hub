@@ -23,9 +23,10 @@ export default function Bio({ girl }: Readonly<{ girl: GirlType }>) {
       </PhotoProvider>
       <div className="">
         <div className="text-2xl font-semibold flex items-center gap-x-4">
-          {girl.name} <FaCheckCircle className="text-blue-500 text-xl" />
-          😍😘💕
+          <h1>{girl.name}</h1>{" "}
+          <FaCheckCircle className="text-blue-500 text-xl" />
         </div>
+        😍😘💕
         <Divider className="my-4" />
         <div className="text-xl mb-4 flex items-center">
           Giới thiệu:{" "}

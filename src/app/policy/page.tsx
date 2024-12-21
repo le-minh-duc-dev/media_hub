@@ -1,3 +1,29 @@
+import { Metadata } from "next"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "Chính sách"
+  const description = "Chính sách của " + process.env.NEXT_PUBLIC_SITE_NAME
+  return {
+    title,
+    openGraph: {
+      title,
+      description,
+      url: `/policy`,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      locale: "vi_VN",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      siteId: "policy",
+      creator: process.env.NEXT_PUBLIC_SITE_NAME,
+      creatorId: process.env.NEXT_PUBLIC_SITE_NAME,
+    },
+  }
+}
+
 export default function page() {
   return (
     <div className="lg:w-3/4 p-8 shadow-lg rounded-lg mx-auto">

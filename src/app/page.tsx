@@ -1,10 +1,36 @@
 import { auth } from "@/authentication/auth"
 import Post from "@/components/Posts/Post"
 import RelatedPosts from "@/components/Posts/RelatedPosts"
+import { slogan } from "@/lib/statements"
 import { getDailyPost } from "@/services/dailyPosts"
 import { getOnlyPublicPost, getPost } from "@/services/posts"
 import { DailyPost } from "@/types/dailyPosts.types"
 
+export async function generateMetadata() {
+  const title = "Trang chủ Girl xinh"
+  return {
+    title,
+    openGraph: {
+      title,
+      description: slogan,
+      url: `/`,
+      siteName: process.env.NEXT_PUBLIC_SITE_NAME,
+      images: ["/assets/images/logo.png"],
+      locale: "vi_VN",
+      type: "website",
+      authors: [process.env.NEXT_PUBLIC_SITE_NAME!],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: slogan,
+      siteId: process.env.NEXT_PUBLIC_SITE_NAME,
+      creator: process.env.NEXT_PUBLIC_SITE_NAME,
+      creatorId: process.env.NEXT_PUBLIC_SITE_NAME,
+      images: ["/assets/images/logo.png"],
+    },
+  }
+}
 export default async function Home() {
   const session = await auth()
   const posts = session?.user.canAccessVipContent
