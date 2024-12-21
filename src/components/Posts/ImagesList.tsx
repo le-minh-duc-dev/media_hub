@@ -47,7 +47,7 @@ function ImageItem({
       <PhotoView src={url}>
         <Image
           classNames={{
-            img: `object-cover  ${isGridMode? "w-full h-full":"lg:w-[600] lg:h-[800] w-full h-[700]"}  `,
+            img: `object-cover  ${isGridMode? "w-full h-full":"lg:w-[600px] lg:h-[800px] w-full h-[700px]"}  `,
             wrapper: `overflow-hidden max-w-full max-h-full ${
               isGridMode ? "aspect-square" : ""
             }`,
