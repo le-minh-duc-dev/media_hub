@@ -5,10 +5,10 @@ import { protectUpdateContentPage } from "@/authentication/protect"
 import { dbConnect } from "@/database/connect"
 import { deleteMediaByURLs } from "@/services/media/mediaService"
 import { createPost as createPostService } from "@/services/posts"
-// import { createPost } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
 import { MutatePostSchemaOnServer } from "@/zod/MutatePostSchema"
 import mongoose from "mongoose"
+import { redirect } from "next/navigation"
 import slug from "slug"
 
 export async function createPost(post: PostType) {
@@ -38,7 +38,7 @@ export async function createPost(post: PostType) {
   try {
     DBsession.startTransaction()
     //create post
-    await createPostService(newPost,false,DBsession)
+    await createPostService(newPost, false, DBsession)
     //commit
     await DBsession.commitTransaction()
   } catch (error) {
@@ -51,6 +51,7 @@ export async function createPost(post: PostType) {
   } finally {
     DBsession.endSession()
   }
-  if (aborted) return { message: "Có lỗi xảy ra! Không thể tạo bài viết ngay lúc này!" }
-  return { message: "Tạo bài viết thành công" }
+  if (aborted)
+    return { message: "Có lỗi xảy ra! Không thể tạo bài viết ngay lúc này!" }
+  redirect(`/posts/${param}`)
 }
