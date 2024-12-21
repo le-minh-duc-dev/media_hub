@@ -44,6 +44,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 }
+
+export async function generateStaticParams() {
+  const posts: PostType[] = await getPost()
+  return posts.map((post) => ({
+    param: post.param,
+  }))
+}
+
 export default async function Page({
   params,
 }: Readonly<{

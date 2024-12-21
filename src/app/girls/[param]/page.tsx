@@ -38,6 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 }
+
+export async function generateStaticParams() {
+  const girls: GirlType[] = await getGirl()
+  return girls.map((girl) => ({
+    param: girl.param,
+  }))
+}
 export default async function Page({
   params,
 }: Readonly<{

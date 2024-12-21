@@ -40,6 +40,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   }
 }
+
+export async function generateStaticParams() {
+  const topics: TopicType[] = await getTopic()
+  return topics.map((topic) => ({
+    param: topic.param,
+  }))
+}
+
 export default async function page({
   searchParams,
   params,
