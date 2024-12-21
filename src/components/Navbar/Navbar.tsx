@@ -124,9 +124,20 @@ export function Navbar(props: Readonly<NavbarProps>) {
           </div>
         </NavbarContent>
         <NavbarMenu>
+          <Link
+            className="w-full py-2"
+            href={`/posts`}
+            onClick={() => {
+              setIsMenuOpen(false)
+            }}
+          >
+            Tất cả bài viết
+          </Link>
+          <Divider className="mb-2" />
+          <h5 className="font-bold text-lg">Chủ đề</h5>
           {contextValues.topics.map((item) => (
             <Link
-              className="w-full "
+              className="w-full py-2"
               href={`/topics/${item.param}`}
               key={item._id as string}
               onClick={() => {
