@@ -1,15 +1,10 @@
 import { dbConnect } from "@/database/connect"
 import Post from "@/database/models/Post"
 import { PostSearchParams } from "@/types/posts.types"
-import { unstable_cache } from "next/cache"
 
 export const GET_RANDOM_POST_TAG = "getRandomPosts"
-export function getRandomPosts(searchParams: PostSearchParams = {}, size = 1) {
-  return unstable_cache(getRandomPostsNoCache, [], {
-    tags: [GET_RANDOM_POST_TAG],
-  })(searchParams, size)
-}
-export async function getRandomPostsNoCache(
+
+export async function getRandomPosts(
   searchParams: PostSearchParams = {},
   size = 1
 ) {
