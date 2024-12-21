@@ -61,7 +61,7 @@ function Form({
           }
         }}
         classNames={{
-          base: "max-w-full sm:max-w-[15rem] h-10 hidden sm:block",
+          base: "max-w-full sm:max-w-[15rem] h-10 ",
           mainWrapper: "h-full",
           input: "text-small",
           inputWrapper:

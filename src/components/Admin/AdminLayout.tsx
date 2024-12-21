@@ -11,16 +11,14 @@ export default function AdminLayout({
 
   return (
     <div className="mt-12">
-      <div className="flex flex-col absolute top-24 ">
-        <h3 className="font-semibold text-center mb-4 text-foreground-400">
-          Quản lý Girl xinh
-        </h3>
+      <div className="flex flex-col items-center lg:top-24 top-0">
         <Tabs
           classNames={{
             tab: "p-0",
+            tabList: "grid grid-cols-2 lg:flex w-full",
+            base: "w-full w-fit",
           }}
           aria-label="Dynamic tabs"
-          isVertical
           selectedKey={currentPath} // Dynamically set the selected tab based on the current path
         >
           <Tab
@@ -57,7 +55,7 @@ export default function AdminLayout({
           ></Tab>
         </Tabs>
       </div>
-      <div className="mx-48 relative">{children}</div>
+      <div className="lg:mx-48 relative mt-12">{children}</div>
     </div>
   )
 }

@@ -62,7 +62,7 @@ export default function Girl(
         <h3 className="text-xl">
           Các girl xinh cùng chủ đề: {(girl.topic as TopicType).name}
         </h3>
-        <div className="flex gap-4 flex-wrap mt-8">
+        <div className="flex gap-4 flex-wrap mt-8 justify-center">
           {relatedGirls.map((girl) => (
             <Link href={`/girls/${girl.param}`} key={girl._id as string}>
               <GirlItem girl={girl} />

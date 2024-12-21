@@ -5,7 +5,7 @@ import Link from "next/link"
 
 export default function Links() {
   return (
-    <NavbarContent className="hidden sm:flex gap-12" justify="center">
+    <NavbarContent className="hidden lg:flex gap-12" justify="center">
       <NavbarItem>
         <Link className="font-semibold" href="/posts">
           Mới nhất

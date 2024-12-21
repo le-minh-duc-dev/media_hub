@@ -19,7 +19,7 @@ export default function TableSearch({
   createPageLink: string
 }>) {
   return (
-    <div className="flex justify-between gap-3 items-end my-4">
+    <div className="flex flex-col items-start lg:flex-row lg:justify-between gap-3  my-4">
       <form
         className="flex gap-x-4"
         onSubmit={(e) => {
@@ -28,7 +28,7 @@ export default function TableSearch({
         }}
       >
         <Input
-          className="w-64"
+          className=";g:w-64"
           placeholder="Search by name..."
           startContent={<IoSearchSharp />}
           value={inputSearch}

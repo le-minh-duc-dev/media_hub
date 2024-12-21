@@ -33,11 +33,11 @@ function ImageItem({
   url,
   description,
   isGridMode,
-}: {
+}: Readonly<{
   url: string
-  description: string
+  description?: string
   isGridMode: boolean
-}) {
+}>) {
   const type = getTypeFileOfUrl(url)
   const isImage = type == "image"
   const isVideo = type == "video"
@@ -47,16 +47,16 @@ function ImageItem({
       <PhotoView src={url}>
         <Image
           classNames={{
-            img: "object-cover",
+            img: "object-cover  lg:w-[600] lg:h-[800] w-full h-[700] ",
             wrapper: `overflow-hidden max-w-full max-h-full ${
               isGridMode ? "aspect-square" : ""
             }`,
           }}
-          alt={description || "image"}
+          alt={description ?? "image"}
           radius="sm"
           src={url}
-          height={isGridMode ? undefined : 800}
-          width={isGridMode ? undefined : 600}
+          // height={isGridMode ? undefined : 800}
+          // width={isGridMode ? undefined : 600}
         />
       </PhotoView>
     )
@@ -77,7 +77,7 @@ function ImageItem({
           <video
             src={url}
             controls
-            className="object-cover"
+            className="object-cover max-w-full"
             muted
             height={800}
             width={600}

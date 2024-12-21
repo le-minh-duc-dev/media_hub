@@ -22,26 +22,54 @@ export default function TopicsMenu(props: { topics: string }) {
         Thể loại
       </h2>
 
-      <Tabs
-        aria-label="Dynamic tabs"
-        items={tabs}
-        isVertical
-        selectedKey={
-          (params?.param as string) == "" ? "all" : (params?.param as string)
-        }
-      >
-        {/* <Tab key="" title="Tất cả"></Tab> */}
-        {(topic) => (
-          <Tab
-            key={topic.param}
-            title={
-              <Link href={`/topics/${topic.param == "all" ? "" : topic.param}`}>
-                {topic.name}
-              </Link>
-            }
-          ></Tab>
-        )}
-      </Tabs>
+      <div className="hidden md:block">
+        <Tabs
+          aria-label="Dynamic tabs"
+          items={tabs}
+          isVertical
+          selectedKey={
+            (params?.param as string) == "" ? "all" : (params?.param as string)
+          }
+        >
+          {/* <Tab key="" title="Tất cả"></Tab> */}
+          {(topic) => (
+            <Tab
+              key={topic.param}
+              title={
+                <Link
+                  href={`/topics/${topic.param == "all" ? "" : topic.param}`}
+                >
+                  {topic.name}
+                </Link>
+              }
+            ></Tab>
+          )}
+        </Tabs>
+      </div>
+      <div className="block md:hidden">
+        <Tabs
+          aria-label="Dynamic tabs"
+          classNames={{tabList:"grid grid-cols-3 w-full", base:"w-full"}}
+          items={tabs}
+          selectedKey={
+            (params?.param as string) == "" ? "all" : (params?.param as string)
+          }
+        >
+          {/* <Tab key="" title="Tất cả"></Tab> */}
+          {(topic) => (
+            <Tab
+              key={topic.param}
+              title={
+                <Link
+                  href={`/topics/${topic.param == "all" ? "" : topic.param}`}
+                >
+                  {topic.name}
+                </Link>
+              }
+            ></Tab>
+          )}
+        </Tabs>
+      </div>
     </div>
   )
 }

@@ -4,11 +4,10 @@ import {
   Navbar as NextNavbar,
   NavbarBrand,
   NavbarContent,
-  Link,
   NavbarMenu,
-  NavbarMenuItem,
   NavbarMenuToggle,
   Button,
+  Divider,
 } from "@nextui-org/react"
 import dynamic from "next/dynamic"
 const Image = dynamic(() => import("next/image"), { ssr: false })
@@ -24,6 +23,7 @@ import { useSession } from "next-auth/react"
 import { SignOut } from "../SignOut"
 import Search from "./Search"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 export const NavbarContext = React.createContext<NavbarContextType>({
   topics: [],
   girls: [],
@@ -32,7 +32,7 @@ export function Navbar(props: Readonly<NavbarProps>) {
   const { data: session } = useSession()
   const router = useRouter()
   const isLogined = session?.user != null
-  const [isMenuOpen] = React.useState(false)
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false)
   const { theme } = useTheme()
   const contextValues = React.useMemo(
     () => ({
@@ -49,11 +49,13 @@ export function Navbar(props: Readonly<NavbarProps>) {
         isBlurred
         maxWidth="xl"
         className="bg-content2"
+        isMenuOpen={isMenuOpen}
+        onMenuOpenChange={setIsMenuOpen}
       >
         <NavbarContent>
           <NavbarMenuToggle
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="sm:hidden"
+            className="lg:hidden"
           />
           <NavbarBrand>
             <Link href="/">
@@ -64,24 +66,26 @@ export function Navbar(props: Readonly<NavbarProps>) {
                 alt="logo"
                 width={60}
                 height={60}
-                className="hidden md:block"
+                className="hidden lg:block"
                 // suppressHydrationWarning
               />
             </Link>
           </NavbarBrand>
         </NavbarContent>
         <Links />
-        <NavbarContent className="sm:hidden ">
+        <NavbarContent className="lg:hidden ">
           <NavbarBrand className="flex justify-center">
-            <Image
-              src={`/assets/images/logo_${
-                theme?.includes("dark") ? "white" : "black"
-              }_sm_300.png`}
-              alt="logo"
-              width={50}
-              height={50}
-              // suppressHydrationWarning
-            />
+            <Link href="/">
+              <Image
+                src={`/assets/images/logo_${
+                  theme?.includes("dark") ? "white" : "black"
+                }_sm_300.png`}
+                alt="logo"
+                width={50}
+                height={50}
+                // suppressHydrationWarning
+              />{" "}
+            </Link>
           </NavbarBrand>
         </NavbarContent>
         <NavbarContent justify="end">
@@ -94,10 +98,13 @@ export function Navbar(props: Readonly<NavbarProps>) {
           </Button>
         </NavbarItem> */}
           <Search />
-          <ThemeSwitcher />
+          <div className="hidden lg:block">
+            <ThemeSwitcher />
+          </div>
           {isLogined && (
             <Button
               variant="light"
+              className="hidden lg:flex"
               isIconOnly
               onPress={() => {
                 router.push("/admin")
@@ -106,22 +113,56 @@ export function Navbar(props: Readonly<NavbarProps>) {
               <IoSettingsSharp className="text-lg" />
             </Button>
           )}
-          {isLogined ? (
-            <SignOut />
-          ) : (
-            <Link href="/login" className="underline text-foreground-50">
-              Login
-            </Link>
-          )}
+          <div className="hidden lg:block">
+            {isLogined ? (
+              <SignOut />
+            ) : (
+              <Link href="/login" className="underline text-foreground-50">
+                Login
+              </Link>
+            )}
+          </div>
         </NavbarContent>
         <NavbarMenu>
           {contextValues.topics.map((item) => (
-            <NavbarMenuItem key={item._id as string}>
-              <Link className="w-full" href={`/topics/${item.param}`} size="lg">
-                {item.name}
-              </Link>
-            </NavbarMenuItem>
+            <Link
+              className="w-full "
+              href={`/topics/${item.param}`}
+              key={item._id as string}
+              onClick={() => {
+                setIsMenuOpen(false)
+              }}
+            >
+              {item.name}
+            </Link>
           ))}
+          <Divider className="my-6" />
+          <div className="flex gap-x-4">
+            <ThemeSwitcher />
+            <Button
+              variant="light"
+              isIconOnly
+              onPress={() => {
+                setIsMenuOpen(false)
+                router.push("/admin")
+              }}
+            >
+              <IoSettingsSharp className="text-lg" />
+            </Button>
+            {isLogined ? (
+              <SignOut />
+            ) : (
+              <Link
+                href="/login"
+                className="underline text-foreground-50"
+                onClick={() => {
+                  setIsMenuOpen(false)
+                }}
+              >
+                Login
+              </Link>
+            )}
+          </div>
         </NavbarMenu>
       </NextNavbar>
     </NavbarContext.Provider>

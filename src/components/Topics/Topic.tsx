@@ -16,9 +16,9 @@ export default function Topic(
   return (
     <div className="mt-12">
       <TopicBreadcrumbs topics={JSON.stringify(props.topics)} />
-      <div className="grid grid-cols-4 mt-12">
+      <div className="grid md:grid-cols-4 mt-12 gap-4">
         <TopicsMenu topics={JSON.stringify(props.topics)} />
-        <div className="col-span-3">
+        <div className="md:col-span-3">
           <div className="">
             <SearchTopics />
           </div>

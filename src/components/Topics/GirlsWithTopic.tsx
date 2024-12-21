@@ -16,7 +16,7 @@ export default function GirlsWithTopic(
   const router = useRouter()
   return (
     <>
-      <div className="flex gap-4 flex-wrap mt-8">
+      <div className="flex gap-4 flex-wrap mt-8 justify-center">
         {girls.map((girl) => (
           <Link href={`/girls/${girl.param}`} key={girl._id as string}>
             <GirlItem girl={girl} />

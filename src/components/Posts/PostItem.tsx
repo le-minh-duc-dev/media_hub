@@ -6,7 +6,7 @@ import React from "react"
 export default function PostItem({ post }: { post: PostType }) {
   return (
     <Link href={`/posts/${post.param}`}>
-      <Card className="h-32 w-96 hover:bg-content2">
+      <Card className="h-32 lg:w-96 max-w-full  hover:bg-content2">
         <CardBody className="flex flex-row gap-x-4">
           <Image
             classNames={{
