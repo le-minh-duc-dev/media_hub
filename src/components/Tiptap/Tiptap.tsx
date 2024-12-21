@@ -38,7 +38,7 @@ const TiptapEditor = memo(function TiptapEditor({
     editable:!isDisabled
   })
   return (
-    <div className={ `w-[500px] max-w-full border rounded-xl p-4 bg-content2 ${isDisabled?"opacity-25":""}`}>
+    <div className={ `lg:w-[500px] w-full max-w-full border rounded-xl p-4 bg-content2 ${isDisabled?"opacity-25":""}`}>
       <MenuBar editor={editor} />
       <div className="mt-2">
         <EditorContent editor={editor} />

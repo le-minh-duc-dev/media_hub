@@ -30,6 +30,7 @@ export default function DangerousSection({
   async function onDelete() {
     setSubmitting(true)
     const result = await deleteFn(param)
+    setSubmitting(false)
     if (result?.message) alert(result?.message)
   }
   return (
@@ -82,6 +83,7 @@ export default function DangerousSection({
                       onPress={() => {
                         onDelete()
                       }}
+                      isLoading={submitting}
                       isDisabled={confirmText != confirmKey || submitting}
                     >
                       Xóa
