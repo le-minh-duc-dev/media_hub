@@ -5,7 +5,6 @@ import { getTopic, deleteTopic as deleteTopicService } from "@/services/topics"
 import { checkGirlExists } from "@/services/girls"
 import { TopicType } from "@/types/topics.types"
 import mongoose from "mongoose"
-import { redirect } from "next/navigation"
 
 export async function deleteTopic(param: string) {
   await protectUpdateContentPage()
@@ -15,7 +14,7 @@ export async function deleteTopic(param: string) {
     topic: topic._id?.toString(),
   })
   if (IsSomeGirlUsingThisTopic) {
-    return { message: "Có girl xinh sử dụng chủ đề này, không thể xóa!" }
+    return { success: false }
   }
   await dbConnect()
   const DBsession = await mongoose.startSession()
@@ -34,7 +33,6 @@ export async function deleteTopic(param: string) {
   } finally {
     DBsession.endSession()
   }
-  if (aborted)
-    return { message: "Có lỗi xảy ra! Không thể xóa chủ đề ngay lúc này!" }
-  redirect("/admin/topics")
+  if (aborted) return { success: false }
+  return { success: true }
 }

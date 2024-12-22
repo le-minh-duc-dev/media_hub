@@ -11,6 +11,7 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react"
+import { useRouter } from "next/navigation"
 import React, { useState } from "react"
 
 export default function DangerousSection({
@@ -18,12 +19,15 @@ export default function DangerousSection({
   deleteFn,
   triggerButtonName,
   confirmKey = "Delete it for me!",
+  afterDeletionUrl,
 }: Readonly<{
   param: string
-  deleteFn: (param: string) => Promise<{ message: string }>
+  deleteFn: (param: string) => Promise<{ success: boolean }>
   triggerButtonName: string
   confirmKey?: string
+  afterDeletionUrl: string
 }>) {
+  const router = useRouter()
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [confirmText, setConfirmText] = useState("")
   const [submitting, setSubmitting] = useState(false)
@@ -31,7 +35,10 @@ export default function DangerousSection({
     setSubmitting(true)
     const result = await deleteFn(param)
     setSubmitting(false)
-    if (result?.message) alert(result?.message)
+    if (result?.success) {
+      alert("Xóa thành công")
+      router.push(afterDeletionUrl)
+    } else alert("Xóa thất bại")
   }
   return (
     <div className="mt-12">

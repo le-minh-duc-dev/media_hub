@@ -19,7 +19,7 @@ export async function updateGirl(
   const validationResult = MutateGirlSchemaOnServer.safeParse(girl)
 
   if (!validationResult.success) {
-    return { message: "Invalid data" }
+    return { success:false }
   }
   const session = await auth()
   const user = session!.user
@@ -57,9 +57,6 @@ export async function updateGirl(
   } finally {
     DBsession.endSession()
   }
-  if (aborted)
-    return {
-      message: "Có lỗi xảy ra! Không thể cập nhật girl xinh ngay lúc này!",
-    }
-  return { message: "Cập nhật girl xinh thành công" }
+  if (aborted) return { success: false }
+  return { success: true }
 }

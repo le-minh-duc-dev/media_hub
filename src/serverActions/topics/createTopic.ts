@@ -14,7 +14,7 @@ export async function createTopic(Topic: TopicType) {
   await protectUpdateContentPage()
   const validationResult = MutateTopicSchema.safeParse(Topic)
   if (!validationResult.success) {
-    return { message: "Invalid data" }
+    return { success:false }
   }
   const session = await auth()
   const user = session!.user
@@ -45,7 +45,6 @@ export async function createTopic(Topic: TopicType) {
   } finally {
     DBsession.endSession()
   }
-  if (aborted)
-    return { message: "Có lỗi xảy ra! Không thể tạo chủ đề ngay lúc này!" }
-  return { message: "Tạo chủ đề thành công" }
+  if (aborted) return { success: false }
+  return { success: true }
 }

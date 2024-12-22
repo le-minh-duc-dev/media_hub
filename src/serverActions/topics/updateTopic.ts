@@ -9,16 +9,13 @@ import { MutateTopicSchema } from "@/zod/MutateTopicSchema"
 import mongoose from "mongoose"
 import slug from "slug"
 
-export async function updateTopic(
-  _id: string,
-  topic: TopicType
-) {
+export async function updateTopic(_id: string, topic: TopicType) {
   await protectUpdateContentPage()
 
   const validationResult = MutateTopicSchema.safeParse(topic)
 
   if (!validationResult.success) {
-    return { message: "Invalid data" }
+    return { success: false }
   }
   const session = await auth()
   const user = session!.user
@@ -31,7 +28,6 @@ export async function updateTopic(
     param,
     description: safeTopic.description,
     isPrivate: safeTopic.isPrivate,
-
   }
   let aborted = false
   await dbConnect()
@@ -50,9 +46,6 @@ export async function updateTopic(
   } finally {
     DBsession.endSession()
   }
-  if (aborted)
-    return {
-      message: "Có lỗi xảy ra! Không thể cập nhật chủ đề ngay lúc này!",
-    }
-  return { message: "Cập nhật chủ đề thành công" }
+  if (aborted) return { success: false }
+  return { success: true }
 }

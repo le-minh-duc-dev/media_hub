@@ -6,7 +6,6 @@ import { deleteMediaByURLs } from "@/services/media/mediaService"
 import { checkPostExists } from "@/services/posts"
 import { GirlType } from "@/types/girls.types"
 import mongoose from "mongoose"
-import { redirect } from "next/navigation"
 
 export async function deleteGirl(param: string) {
   await protectUpdateContentPage()
@@ -16,7 +15,7 @@ export async function deleteGirl(param: string) {
     girl: girl._id?.toString(),
   })
   if (IsSomePostUsingThisGirl) {
-    return { message: "Có bài viết sử dụng girl xinh này, không thể xóa!" }
+    return {success:false}
   }
   await dbConnect()
   const DBsession = await mongoose.startSession()
@@ -39,6 +38,6 @@ export async function deleteGirl(param: string) {
     DBsession.endSession()
   }
   if (aborted)
-    return { message: "Có lỗi xảy ra! Không thể xóa girl xinh ngay lúc này!" }
-  redirect("/admin/girls")
+    return { success: false }
+  return { success: true }
 }

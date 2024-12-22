@@ -96,7 +96,7 @@ export default function MutatePost(
       initialPost?._id?.toString()
     )
   }
-  console.log("Errors in form",errors)
+  console.log("Errors in form", errors)
   if (!girls) return <div>No girls yet.</div>
   return (
     <div className="mt-12 flex justify-center">
@@ -226,6 +226,7 @@ export default function MutatePost(
         </form>
         {!!initialPost && (
           <DangerousSection
+            afterDeletionUrl="/admin/posts"
             param={initialPost.param}
             deleteFn={deletePost}
             triggerButtonName="Xóa bài viết"

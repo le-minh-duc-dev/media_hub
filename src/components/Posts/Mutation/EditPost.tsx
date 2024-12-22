@@ -5,6 +5,9 @@ import { uploadFile } from "@/services/media/clientService"
 
 import { useRef } from "react"
 import { updatePost } from "@/serverActions/posts"
+import { deleteLeakUploadedMedia } from "@/serverActions/deleteLeakUploadedMedia"
+import slug from "slug"
+import { useRouter } from "next/navigation"
 
 export default function EditPost(
   props: Readonly<{
@@ -12,6 +15,7 @@ export default function EditPost(
     initialPost?: string
   }>
 ) {
+  const router  = useRouter()
   const deletedUrlsRef = useRef<string[]>([])
   const uploadedUrlsRef = useRef<string[]>([])
   return (
@@ -46,20 +50,24 @@ export default function EditPost(
             })
           )
 
-          const result = await updatePost(
-            _id!,
-            submitData,
-            deletedUrlsRef.current,
-            uploadedUrlsRef.current
-          )
-          setSubmitting(false)
-          console.log(
-            "Edit debug",
-            submitData,
-            deletedUrlsRef.current,
-            uploadedUrlsRef.current
-          )
-          if (result?.message) alert(result.message)
+          try {
+            const result = await updatePost(
+              _id!,
+              submitData,
+              deletedUrlsRef.current,
+              uploadedUrlsRef.current
+            )
+            setSubmitting(false)
+
+            if (result?.success) {
+              alert("Cập nhật bài viết thành công")
+              router.push(`/posts/${slug(submitData.title)}`)
+            } else alert("Cập nhật bài viết thất bại")
+          } catch (error) {
+            console.log(error)
+            await deleteLeakUploadedMedia(uploadedUrlsRef.current)
+            alert("Cập nhật bài viết thất bại")
+          }
         }}
         removeFn={(id, body, setValue) => {
           const updatedBody = body.filter((item) => item.id !== id)
@@ -71,7 +79,6 @@ export default function EditPost(
           }
         }}
       />
-     
     </div>
   )
 }

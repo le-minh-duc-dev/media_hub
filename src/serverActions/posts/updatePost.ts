@@ -9,7 +9,6 @@ import { updatePost as updatePostService } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
 import { MutatePostSchemaOnServer } from "@/zod/MutatePostSchema"
 import mongoose from "mongoose"
-import { redirect } from "next/navigation"
 import slug from "slug"
 
 export async function updatePost(
@@ -23,7 +22,7 @@ export async function updatePost(
   const validationResult = MutatePostSchemaOnServer.safeParse(post)
 
   if (!validationResult.success) {
-    return { message: "Invalid data" }
+    return { success:false }
   }
   const session = await auth()
   const user = session!.user
@@ -64,7 +63,7 @@ export async function updatePost(
   }
   if (aborted)
     return {
-      message: "Có lỗi xảy ra! Không thể cập nhật bài viết ngay lúc này!",
+      success: false,
     }
-  redirect("/admin/topics")
+  return { success: true }
 }

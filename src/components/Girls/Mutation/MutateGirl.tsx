@@ -200,6 +200,7 @@ export default function MutateGirl(
         </form>
         {!!initialGirl && (
           <DangerousSection
+            afterDeletionUrl="/admin/girls"
             param={initialGirl.param}
             deleteFn={deleteGirl}
             triggerButtonName="Xóa girl xinh"

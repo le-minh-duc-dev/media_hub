@@ -1,5 +1,5 @@
 import { getFileType, getTypeFileOfUrl } from "@/lib/utils"
-import { Button, Image, Input, Skeleton, Tooltip } from "@nextui-org/react"
+import { Button, Image, Input,  Tooltip } from "@nextui-org/react"
 import React, { useEffect, useState } from "react"
 import { IoClose } from "react-icons/io5"
 import { FaRegCirclePlay } from "react-icons/fa6"
@@ -15,7 +15,6 @@ export default function ImageItem({
 }: Readonly<{
   index: number
   bodyLength: number
-
   id: string
   file?: File
   url?: string

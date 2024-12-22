@@ -115,6 +115,7 @@ export default function MutateTopic(
         </form>
         {!!initialTopic && (
           <DangerousSection
+           afterDeletionUrl="/admin/topics"
             param={initialTopic.param}
             deleteFn={deleteTopic}
             triggerButtonName="Xóa chủ đề"

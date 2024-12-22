@@ -1,9 +1,12 @@
-'use client'
+"use client"
 import React from "react"
 import MutateGirl from "./MutateGirl"
 import { uploadFile } from "@/services/media/clientService"
 import { updateGirl } from "@/serverActions/girls"
 import { GirlType } from "@/types/girls.types"
+import { deleteLeakUploadedMedia } from "@/serverActions/deleteLeakUploadedMedia"
+import slug from "slug"
+import { useRouter } from "next/navigation"
 
 export default function EditGirl(
   props: Readonly<{
@@ -11,6 +14,8 @@ export default function EditGirl(
     initialGirl: string
   }>
 ) {
+  const router = useRouter()
+
   return (
     <MutateGirl
       initialGirl={props.initialGirl}
@@ -42,9 +47,18 @@ export default function EditGirl(
             console.error("Uploading the file failed! : " + girlFile.name)
           }
         }
-        const result = await updateGirl(_id!, submitData, oldUrl)
-        setSubmitting(false)
-        if (result?.message) alert(result.message)
+        try {
+          const result = await updateGirl(_id!, submitData, oldUrl)
+          setSubmitting(false)
+          if (result?.success) {
+            alert("Cập nhật girl xinh thành công")
+            router.push(`/girls/${slug(submitData.name)}`)
+          } else alert("Cập nhật girl xinh thất bại")
+        } catch (error) {
+          console.log(error)
+          await deleteLeakUploadedMedia([oldUrl])
+          alert("Cập nhật girl xinh thất bại")
+        }
       }}
     />
   )

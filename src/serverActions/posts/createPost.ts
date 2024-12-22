@@ -8,14 +8,13 @@ import { createPost as createPostService } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
 import { MutatePostSchemaOnServer } from "@/zod/MutatePostSchema"
 import mongoose from "mongoose"
-import { redirect } from "next/navigation"
 import slug from "slug"
 
 export async function createPost(post: PostType) {
   await protectUpdateContentPage()
   const validationResult = MutatePostSchemaOnServer.safeParse(post)
   if (!validationResult.success) {
-    return { message: "Invalid data" }
+    return  { success: false }
   }
   const session = await auth()
   const user = session!.user
@@ -51,7 +50,6 @@ export async function createPost(post: PostType) {
   } finally {
     DBsession.endSession()
   }
-  if (aborted)
-    return { message: "Có lỗi xảy ra! Không thể tạo bài viết ngay lúc này!" }
-  redirect(`/posts/${param}`)
+  if (aborted) return { success: false }
+  return { success: true }
 }

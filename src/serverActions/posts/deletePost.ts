@@ -5,7 +5,6 @@ import { deleteMediaByURLs } from "@/services/media/mediaService"
 import { deletePost as deletePostService, getPost } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
 import mongoose from "mongoose"
-import { redirect } from "next/navigation"
 
 export async function deletePost(param: string) {
   await protectUpdateContentPage()
@@ -31,7 +30,6 @@ export async function deletePost(param: string) {
   } finally {
     DBsession.endSession()
   }
-  if (aborted)
-    return { message: "Có lỗi xảy ra! Không thể xóa bài viết ngay lúc này!" }
-  return redirect("/admin/posts")
+  if (aborted) return { success: false }
+  return { success: true }
 }
