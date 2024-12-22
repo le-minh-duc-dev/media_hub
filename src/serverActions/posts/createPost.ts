@@ -8,13 +8,15 @@ import { createPost as createPostService } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
 import { MutatePostSchemaOnServer } from "@/zod/MutatePostSchema"
 import mongoose from "mongoose"
+import { after } from "next/server"
 import slug from "slug"
+import { sendNotifications } from "../notifications"
 
 export async function createPost(post: PostType) {
   await protectUpdateContentPage()
   const validationResult = MutatePostSchemaOnServer.safeParse(post)
   if (!validationResult.success) {
-    return  { success: false }
+    return { success: false }
   }
   const session = await auth()
   const user = session!.user
@@ -40,6 +42,9 @@ export async function createPost(post: PostType) {
     await createPostService(newPost, false, DBsession)
     //commit
     await DBsession.commitTransaction()
+    after(() => {
+      sendNotifications(newPost.title, "Bài viết mới")
+    })
   } catch (error) {
     //rollback
     DBsession.abortTransaction()

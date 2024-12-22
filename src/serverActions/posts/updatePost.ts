@@ -9,7 +9,9 @@ import { updatePost as updatePostService } from "@/services/posts"
 import { PostType } from "@/types/posts.types"
 import { MutatePostSchemaOnServer } from "@/zod/MutatePostSchema"
 import mongoose from "mongoose"
+import { after } from "next/server"
 import slug from "slug"
+import { sendNotifications } from "../notifications"
 
 export async function updatePost(
   _id: string,
@@ -22,7 +24,7 @@ export async function updatePost(
   const validationResult = MutatePostSchemaOnServer.safeParse(post)
 
   if (!validationResult.success) {
-    return { success:false }
+    return { success: false }
   }
   const session = await auth()
   const user = session!.user
@@ -50,7 +52,9 @@ export async function updatePost(
     //delete images and videos deleted
     await deleteMediaByURLs(deletedUrls)
     await DBsession.commitTransaction()
-    console.log("transaction committed!")
+    after(() => {
+      sendNotifications(newPost.title, "Bài viết mới cập nhật")
+    })
   } catch (error) {
     //rollback
     DBsession.abortTransaction()

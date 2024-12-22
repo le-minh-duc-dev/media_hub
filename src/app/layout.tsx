@@ -4,6 +4,7 @@ import { Providers } from "@/components/Providers"
 import NavbarWrapper from "@/components/Navbar/NavbarWrapper"
 import Footer from "@/components/Footer"
 import { slogan } from "@/lib/statements"
+import NotificationManager from "@/components/Notifications/NotificationManager"
 export async function generateMetadata() {
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
@@ -35,6 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="">
+        <NotificationManager/>
         <Providers>
           <NavbarWrapper />
           <main className="relative max-w-7xl container mx-auto px-6 min-h-[75vh]">
