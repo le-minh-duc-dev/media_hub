@@ -43,7 +43,11 @@ export async function createPost(post: PostType) {
     //commit
     await DBsession.commitTransaction()
     after(() => {
-      sendNotifications(newPost.title, "Bài viết mới")
+      sendNotifications(
+        newPost.title,
+        "Bài viết mới",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/posts/${param}`
+      )
     })
   } catch (error) {
     //rollback

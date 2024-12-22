@@ -14,7 +14,8 @@ webpush.setVapidDetails(
 export async function sendNotification(
   subscription: PushSubscription,
   message: string,
-  title: string = "Thông báo"
+  title: string = "Thông báo",
+  willClickedUrl: string = process.env.NEXT_PUBLIC_BASE_URL!
 ) {
   try {
     await webpush.sendNotification(
@@ -23,6 +24,7 @@ export async function sendNotification(
         title,
         body: message,
         icon: "/assets/images/logo.png",
+        url: willClickedUrl,
       })
     )
     return { success: true }
@@ -34,14 +36,15 @@ export async function sendNotification(
 
 export async function sendNotifications(
   message: string,
-  title: string = "Thông báo"
+  title: string = "Thông báo",
+  willClickedUrl: string = process.env.NEXT_PUBLIC_BASE_URL!
 ) {
   try {
     await dbConnect()
     const subscriptions: PushSubscription[] = await getSubscription()
     await Promise.all(
       subscriptions.map(async (sub) => {
-        return sendNotification(sub, message, title)
+        return sendNotification(sub, message, title, willClickedUrl)
       })
     )
     console.log("Already send notitications")

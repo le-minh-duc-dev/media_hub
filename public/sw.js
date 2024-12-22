@@ -7,8 +7,9 @@ self.addEventListener("push", function (event) {
       badge: "/badge.png",
       vibrate: [100, 50, 100],
       data: {
+        url:data.url,
         dateOfArrival: Date.now(),
-        primaryKey: "2",
+        primaryKey: data.primarykey?data.primaryKey:1,
       },
     }
     event.waitUntil(self.registration.showNotification(data.title, options))
@@ -17,6 +18,7 @@ self.addEventListener("push", function (event) {
 
 self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.")
+  const url = event.notification.data?.url
   event.notification.close()
-  event.waitUntil(clients.openWindow(process.env.NEXT_PUBLIC_BASE_URL))
+  event.waitUntil(clients.openWindow(url ? url : "https://girlxinh.fun"))
 })

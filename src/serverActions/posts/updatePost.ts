@@ -53,7 +53,7 @@ export async function updatePost(
     await deleteMediaByURLs(deletedUrls)
     await DBsession.commitTransaction()
     after(() => {
-      sendNotifications(newPost.title, "Bài viết mới cập nhật")
+      sendNotifications(newPost.title, "Bài viết mới cập nhật",`${process.env.NEXT_PUBLIC_BASE_URL}/posts/${param}`)
     })
   } catch (error) {
     //rollback
