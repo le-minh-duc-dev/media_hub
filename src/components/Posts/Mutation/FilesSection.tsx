@@ -58,9 +58,8 @@ export default function FilesSection({
             bodyLength={body.length}
             moveFn={(newIndex) => {
               const temp = [...body]
-              const middle = temp[index]
-              temp[index] = temp[newIndex]
-              temp[newIndex] = middle
+              const [item] = temp.splice(index, 1);
+              temp.splice(newIndex, 0, item);
               setValue("body", temp)
             }}
             index={index}
