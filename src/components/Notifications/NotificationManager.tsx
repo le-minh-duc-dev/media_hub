@@ -1,9 +1,7 @@
 "use client"
 
-import {  useEffect } from "react"
-import {
-  subscribeUser,
-} from "@/serverActions/notifications"
+import { useEffect } from "react"
+import { subscribeUser } from "@/serverActions/notifications"
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
@@ -25,8 +23,13 @@ export default function NotificationManager() {
         scope: "/",
         updateViaCache: "none",
       })
+
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: "SKIP_WAITING" })
+      }
+
       const sub = await registration.pushManager.getSubscription()
-      console.log("sub",sub);
+      console.log("sub", sub)
       if (!sub) {
         subscribeToPush()
       }
