@@ -8,8 +8,9 @@ import {
   Button,
   Input,
   Switch,
+  Tooltip,
 } from "@nextui-org/react"
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import { FaCrown } from "react-icons/fa"
 import {
   useForm,
@@ -24,6 +25,8 @@ import UploadingModal from "../../UploadingModal"
 import DangerousSection from "../../DangerousSection"
 import FilesSection from "./FilesSection"
 import { deletePost } from "@/serverActions/posts"
+import { LuRefreshCcw } from "react-icons/lu"
+import { PostTitlePosition, postTitles } from "@/lib/statements"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -59,6 +62,8 @@ export default function MutatePost(
   //submitting
   const [submitting, setSubmitting] = useState(false)
   const [uploadPercentage, setUploadPercentage] = useState(0)
+  // for generating title automatically
+  const generatedTitltesRef = useRef<string[]>([])
   //
   const {
     control,
@@ -70,7 +75,7 @@ export default function MutatePost(
     formState: { errors },
   } = useForm<PostType>({
     defaultValues: {
-      title: initialPost?.title ?? "Bộ sưu tập ảnh nóng bỏng của Ribi Sachi",
+      title: initialPost?.title ?? "Bộ sưu tập ảnh bikini mới nhất của Ribi Sachi",
       description: initialPost?.description ?? "",
       girl:
         (initialPost?.girl &&
@@ -96,6 +101,23 @@ export default function MutatePost(
       initialPost?._id?.toString()
     )
   }
+  const generateTitle = () => {
+    let title = postTitles[Math.floor(Math.random() * postTitles.length)]
+    while (generatedTitltesRef.current.includes(title.content)) {
+      if (generatedTitltesRef.current.length == postTitles.length)
+        generatedTitltesRef.current = []
+      title = postTitles[Math.floor(Math.random() * postTitles.length)]
+    }
+    // add to generated titles
+    generatedTitltesRef.current.push(title.content)
+    // set title
+    const selectedGirl = girls!.find((girl) => girl._id == getValues().girl)
+    if (title.position == PostTitlePosition.PREFIX) {
+      setValue("title", `${title.content} ${selectedGirl?.name}`)
+    } else {
+      setValue("title", `${selectedGirl?.name} ${title.content}`)
+    }
+  }
   console.log("Errors in form", errors)
   if (!girls) return <div>No girls yet.</div>
   return (
@@ -111,17 +133,29 @@ export default function MutatePost(
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-12 grid gap-6">
           {/* Title Input */}
-          <div>
-            <Input
-              {...register("title")}
-              label="Tiêu đề"
-              type="text"
-              labelPlacement="outside"
-              defaultValue={initialPost?.title ?? ""}
-              isInvalid={!!errors.title}
-              errorMessage={errors.title?.message}
-              isDisabled={submitting}
+          <div className="flex gap-4 items-end">
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  label="Tiêu đề"
+                  type="text"
+                  labelPlacement="outside"
+                  value={field.value}
+                  onValueChange={(value) => field.onChange(value)}
+                  isInvalid={!!errors.title}
+                  errorMessage={errors.title?.message}
+                  isDisabled={submitting}
+                />
+              )}
             />
+
+            <Tooltip content="Tạo tiêu đề tự động">
+              <Button className="mt-4" isIconOnly onPress={generateTitle}>
+                <LuRefreshCcw />
+              </Button>
+            </Tooltip>
           </div>
 
           {/* TiptapEditor - Mô tả */}
@@ -165,10 +199,10 @@ export default function MutatePost(
               )}
             />
           </div>
-          {/* Title Input */}
-          <div>
+          {/* View Input */}
+          <div className="flex gap-4 justify-start items-end">
             <Input
-              classNames={{ mainWrapper: "w-fit" }}
+              classNames={{ mainWrapper: "w-fit", base: "w-fit" }}
               {...register("view", {
                 setValueAs: (value) => {
                   return value ? Number(value) : 0
@@ -183,6 +217,14 @@ export default function MutatePost(
               errorMessage={errors.view?.message}
               isDisabled={submitting}
             />
+            <Button
+              isIconOnly
+              onPress={() => {
+                setValue("view", Math.floor(Math.random() * 30000 + 10000))
+              }}
+            >
+              <LuRefreshCcw />
+            </Button>
           </div>
           {/* VIP Post Switch */}
           <div>
