@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "build-and-test":"npm run build && npx playwright test",
     "test": "jest --watch "
   },
   "dependencies": {
