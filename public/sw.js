@@ -24,8 +24,9 @@ self.addEventListener("activate", (event) => {
 })
 
 self.addEventListener("fetch", (event) => {
+  const imageRegex = /^\/assets\/images\/.*\.(jpg|jpeg|png|gif|svg|webp)$/i;
   const requestUrl = new URL(event.request.url)
-  if (requestUrl.hostname === "res.cloudinary.com") {
+  if (requestUrl.hostname === "res.cloudinary.com" || imageRegex.test(requestUrl.pathname)) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
         if (cachedResponse) {
