@@ -1,3 +1,5 @@
+const CACHE_NAME = "cloudinary-image-cache-v1"
+
 self.addEventListener("install", () => {
   console.log("Service Worker installing...")
   self.skipWaiting()
@@ -5,7 +7,42 @@ self.addEventListener("install", () => {
 
 self.addEventListener("activate", (event) => {
   console.log("Service Worker activating...")
-  event.waitUntil(self.clients.claim())
+  event.waitUntil(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log(`Deleting old cache: ${cacheName}`)
+            return caches.delete(cacheName)
+          }
+        })
+      )
+    )
+  )
+
+  return self.clients.claim()
+})
+
+self.addEventListener("fetch", (event) => {
+  const requestUrl = new URL(event.request.url)
+  if (requestUrl.hostname === "res.cloudinary.com") {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          console.log(`Serving cached Cloudinary image: ${requestUrl.href}`)
+          return cachedResponse 
+        }
+
+        console.log(`Fetching and caching Cloudinary image: ${requestUrl.href}`)
+        return fetch(event.request).then((networkResponse) => {
+          return caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, networkResponse.clone())
+            return networkResponse
+          })
+        })
+      })
+    )
+  }
 })
 
 self.addEventListener("message", (event) => {

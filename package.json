@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev-3001": "next dev --turbopack -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "build-and-test":"npm run build && npx playwright test",
-    "test": "jest --watch "
+    "test": "npx playwright test"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
