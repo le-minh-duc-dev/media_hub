@@ -75,7 +75,8 @@ export default function MutatePost(
     formState: { errors },
   } = useForm<PostType>({
     defaultValues: {
-      title: initialPost?.title ?? "Bộ sưu tập ảnh bikini mới nhất của Ribi Sachi",
+      title:
+        initialPost?.title ?? "Bộ sưu tập ảnh bikini mới nhất của Ribi Sachi",
       description: initialPost?.description ?? "",
       girl:
         (initialPost?.girl &&
@@ -102,11 +103,15 @@ export default function MutatePost(
     )
   }
   const generateTitle = () => {
-    let title = postTitles[Math.floor(Math.random() * postTitles.length)]
+    let index = Math.floor(Math.random() * postTitles.length)
+    let title = postTitles[index]
+    if (generatedTitltesRef.current.length >= postTitles.length) {
+      generatedTitltesRef.current = []
+    }
+
     while (generatedTitltesRef.current.includes(title.content)) {
-      if (generatedTitltesRef.current.length == postTitles.length)
-        generatedTitltesRef.current = []
-      title = postTitles[Math.floor(Math.random() * postTitles.length)]
+      index = Math.floor(Math.random() * postTitles.length)
+      title = postTitles[index]
     }
     // add to generated titles
     generatedTitltesRef.current.push(title.content)

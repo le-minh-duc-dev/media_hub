@@ -23,10 +23,6 @@ export const postTitles = [
     content: "cực quyến rũ trong trang phục bikini bãi biển",
   },
   {
-    position: PostTitlePosition.PREFIX,
-    content: "Bộ sưu tập ảnh nóng bỏng của",
-  },
-  {
     position: PostTitlePosition.SUFFIX,
     content: "xinh xắn trong trang phục bikini bãi biển",
   },
