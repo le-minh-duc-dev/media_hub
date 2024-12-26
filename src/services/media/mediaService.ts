@@ -32,19 +32,26 @@ async function deleteImageByURL(url: string) {
 
 async function deleteImagesByURLs(urls: string[]) {
   if (urls.length === 0) return
-  v2.config(getConfig(urls[0]))
-  await v2.api.delete_resources(urls.map((url) => extractPublicId(url)))
+  await Promise.all(
+    urls.map((url) => {
+      const publicId = extractPublicId(url)
+      v2.config(getConfig(url))
+      return v2.api.delete_resources([publicId])
+    })
+  )
 }
 
 async function deleteVideosByURLs(urls: string[]) {
   if (urls.length === 0) return
-  v2.config(getConfig(urls[0]))
-  v2.api.delete_resources(
-    urls.map((url) => extractPublicId(url)),
-    {
-      type: "upload",
-      resource_type: "video",
-    }
+  await Promise.all(
+    urls.map((url) => {
+      const publicId = extractPublicId(url)
+      v2.config(getConfig(url))
+      return v2.api.delete_resources([publicId], {
+        type: "upload",
+        resource_type: "video",
+      })
+    })
   )
 }
 async function deleteMediaByURLs(urls: string[]) {
