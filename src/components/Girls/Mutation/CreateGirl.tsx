@@ -5,7 +5,6 @@ import { uploadFile } from "@/services/media/clientService"
 import { createGirl } from "@/serverActions/girls"
 import { GirlType } from "@/types/girls.types"
 import { deleteLeakUploadedMedia } from "@/serverActions/deleteLeakUploadedMedia"
-import slug from "slug"
 import { useRouter } from "next/navigation"
 
 export default function CreateGirl(props: Readonly<{ topics: string }>) {
@@ -39,7 +38,7 @@ export default function CreateGirl(props: Readonly<{ topics: string }>) {
           setSubmitting(false)
           if (result?.success) {
             alert("Tạo girl xinh thành công")
-            router.push(`/girls/${slug(submitData.name)}`)
+            router.push(`/admin/posts/create`)
           } else alert("Tạo girl xinh thất bại")
         } catch (error) {
           console.log(error)
