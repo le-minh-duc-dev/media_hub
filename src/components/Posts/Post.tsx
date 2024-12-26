@@ -37,7 +37,7 @@ const Post = memo(function Post({
         <Button
           isIconOnly
           aria-label="Go up"
-          className="fixed bottom-12 right-12"
+          className="fixed bottom-12 right-12 z-50"
           onPress={() => {
             goToTop()
           }}
