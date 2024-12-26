@@ -12,7 +12,13 @@ export default function CreateGirl(props: Readonly<{ topics: string }>) {
   return (
     <MutateGirl
       topics={props.topics}
-      onSubmit={async (data, setSubmitting, setUploadPercentage, girlFile) => {
+      onSubmit={async (
+        data,
+        setSubmitting,
+        setUploadPercentage,
+        girlFile,
+        cloudStorage
+      ) => {
         const submitData: GirlType = { ...data }
 
         setUploadPercentage(0)
@@ -22,7 +28,7 @@ export default function CreateGirl(props: Readonly<{ topics: string }>) {
           let tried = 0
           let url = ""
           while (tried < 3 && !url) {
-            url = await uploadFile(girlFile)
+            url = await uploadFile(girlFile, cloudStorage)
             tried += 1
           }
           setUploadPercentage(100)

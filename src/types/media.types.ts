@@ -1,0 +1,1 @@
+export type CloudStorageTypes = "default" | "v1"

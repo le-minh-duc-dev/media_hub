@@ -25,6 +25,7 @@ export default function EditGirl(
         setSubmitting,
         setUploadPercentage,
         girlFile,
+        cloudStorage,
         _id
       ) => {
         const submitData: GirlType = { ...data }
@@ -36,7 +37,7 @@ export default function EditGirl(
           let tried = 0
           let url = ""
           while (tried < 3 && !url) {
-            url = await uploadFile(girlFile)
+            url = await uploadFile(girlFile,cloudStorage)
             tried += 1
           }
           setUploadPercentage(100)

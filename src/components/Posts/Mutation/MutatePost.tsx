@@ -2,6 +2,7 @@
 import dynamic from "next/dynamic"
 import { GirlType } from "@/types/girls.types"
 import { PostBodyItem, PostType } from "@/types/posts.types"
+import { CgDanger } from "react-icons/cg";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -27,6 +28,7 @@ import FilesSection from "./FilesSection"
 import { deletePost } from "@/serverActions/posts"
 import { LuRefreshCcw } from "react-icons/lu"
 import { PostTitlePosition, postTitles } from "@/lib/statements"
+import { CloudStorageTypes } from "@/types/media.types"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -36,6 +38,16 @@ export type LocalFile = {
   file: File
   id: string
 }
+const cloudStorages = [
+  {
+    title: "Mặc đinh",
+    key: "default",
+  },
+  {
+    title: "V1",
+    key: "v1",
+  },
+]
 
 export default function MutatePost(
   props: Readonly<{
@@ -45,6 +57,7 @@ export default function MutatePost(
       data: PostType,
       setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
       setUploadPercentage: React.Dispatch<React.SetStateAction<number>>,
+      cloudStorage: CloudStorageTypes,
       _id?: string
     ) => Promise<void>
     removeFn: (
@@ -64,6 +77,9 @@ export default function MutatePost(
   const [uploadPercentage, setUploadPercentage] = useState(0)
   // for generating title automatically
   const generatedTitltesRef = useRef<string[]>([])
+  //
+  //for cloudinary account
+  const [cloudStorage, setCloudStorage] = useState<CloudStorageTypes>("default")
   //
   const {
     control,
@@ -99,6 +115,7 @@ export default function MutatePost(
       data,
       setSubmitting,
       setUploadPercentage,
+      cloudStorage,
       initialPost?._id?.toString()
     )
   }
@@ -203,6 +220,24 @@ export default function MutatePost(
                 </Autocomplete>
               )}
             />
+          </div>
+          {/*Cloud storage */}
+          <div className="flex gap-4 items-end">
+          <Autocomplete
+            className="max-w-xs "
+            label="Nơi lưu trữ"
+            labelPlacement="outside"
+            defaultSelectedKey="default"
+            onSelectionChange={(key) => {
+              setCloudStorage(key as CloudStorageTypes)
+            }}
+            isDisabled={submitting}
+          >
+            {cloudStorages.map((cloud) => (
+              <AutocompleteItem key={cloud.key}>{cloud.title}</AutocompleteItem>
+            ))}
+          </Autocomplete>
+          <CgDanger className="text-2xl text-red-500" />
           </div>
           {/* View Input */}
           <div className="flex gap-4 justify-start items-end">

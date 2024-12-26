@@ -17,7 +17,7 @@ export default function CreatePost(
     <MutatePost
       girls={props.girls}
       initialPost={props.initialPost}
-      onSubmit={async (data, setSubmitting, setUploadPercentage) => {
+      onSubmit={async (data, setSubmitting, setUploadPercentage, cloudStorage) => {
         const submitData: PostType = { ...data }
         const body = submitData.body
         setUploadPercentage(0)
@@ -29,7 +29,7 @@ export default function CreatePost(
             let tried = 0
             let url = ""
             while (tried < 3 && !url) {
-              url = await uploadFile(file)
+              url = await uploadFile(file, cloudStorage)
               tried += 1
             }
             setUploadPercentage((pre) => pre + Math.floor(100 / totalFile))

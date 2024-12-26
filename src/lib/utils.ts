@@ -85,6 +85,13 @@ export function extractPublicId(cloudinarySecureUrl: string) {
   return extractedPart
 }
 
+export function extractCloudName(cloudinarySecureUrl: string) {
+  if (!cloudinarySecureUrl) return ""
+  const parts = cloudinarySecureUrl.split("/")
+  if (parts.length < 4) return ""
+  return parts[3]
+}
+
 export function isRegExpString(str: string) {
   try {
     new RegExp(str)
@@ -112,7 +119,6 @@ export function getRandomViewCount(max = 20000) {
 }
 
 export function compareDates(date1: string, date2: string) {
-  
   // Convert the date strings to Date objects
   const d1 = new Date(date1)
   const d2 = new Date(date2)

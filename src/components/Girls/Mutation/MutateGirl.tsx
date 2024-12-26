@@ -18,10 +18,22 @@ import React, { useMemo, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { FaCrown } from "react-icons/fa"
 import ImageItem from "./ImageItem"
+import { CgDanger } from "react-icons/cg"
+import { CloudStorageTypes } from "@/types/media.types"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
 })
+const cloudStorages = [
+  {
+    title: "Mặc đinh",
+    key: "default",
+  },
+  {
+    title: "V1",
+    key: "v1",
+  },
+]
 export default function MutateGirl(
   props: Readonly<{
     topics: string
@@ -31,6 +43,7 @@ export default function MutateGirl(
       setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
       setUploadPercentage: React.Dispatch<React.SetStateAction<number>>,
       girlFile: File | undefined,
+      cloudStorage:CloudStorageTypes,
       _id?: string
     ) => Promise<void>
   }>
@@ -45,6 +58,8 @@ export default function MutateGirl(
   const [uploadPercentage, setUploadPercentage] = useState(0)
   // girl image file
   const [girlFile, setGirlFile] = useState<File | undefined>(undefined)
+  //
+  const [cloudStorage, setCloudStorage] = useState<CloudStorageTypes>("default")
   //
   const {
     control,
@@ -73,6 +88,7 @@ export default function MutateGirl(
       setSubmitting,
       setUploadPercentage,
       girlFile,
+      cloudStorage,
       initialGirl?._id?.toString()
     )
   }
@@ -147,7 +163,26 @@ export default function MutateGirl(
               )}
             />
           </div>
-
+          {/*Cloud storage */}
+          <div className="flex gap-4 items-end">
+            <Autocomplete
+              className="max-w-xs "
+              label="Nơi lưu trữ"
+              labelPlacement="outside"
+              defaultSelectedKey="default"
+              onSelectionChange={(key) => {
+                setCloudStorage(key as CloudStorageTypes)
+              }}
+              isDisabled={submitting}
+            >
+              {cloudStorages.map((cloud) => (
+                <AutocompleteItem key={cloud.key}>
+                  {cloud.title}
+                </AutocompleteItem>
+              ))}
+            </Autocomplete>
+            <CgDanger className="text-2xl text-red-500" />
+          </div>
           {/* VIP Post Switch */}
           <div>
             <Controller
