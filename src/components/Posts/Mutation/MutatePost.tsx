@@ -2,7 +2,6 @@
 import dynamic from "next/dynamic"
 import { GirlType } from "@/types/girls.types"
 import { PostBodyItem, PostType } from "@/types/posts.types"
-import { CgDanger } from "react-icons/cg";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -29,6 +28,8 @@ import { deletePost } from "@/serverActions/posts"
 import { LuRefreshCcw } from "react-icons/lu"
 import { PostTitlePosition, postTitles } from "@/lib/statements"
 import { CloudStorageTypes } from "@/types/media.types"
+import { ConfigurationType } from "@/types/configuration.types"
+import { CloudStorage } from "@/services/media/cloudStorage"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -51,6 +52,7 @@ const cloudStorages = [
 
 export default function MutatePost(
   props: Readonly<{
+    configuration: string
     girls: string
     initialPost?: string
     onSubmit: (
@@ -69,6 +71,9 @@ export default function MutatePost(
 ) {
   let initialPost: PostType | undefined
   const girls: GirlType[] | undefined = JSON.parse(props.girls)
+  const configuration: ConfigurationType | undefined = JSON.parse(
+    props.configuration
+  )
   if (props.initialPost) {
     initialPost = JSON.parse(props.initialPost)
   }
@@ -79,7 +84,9 @@ export default function MutatePost(
   const generatedTitltesRef = useRef<string[]>([])
   //
   //for cloudinary account
-  const [cloudStorage, setCloudStorage] = useState<CloudStorageTypes>("default")
+  const [cloudStorage, setCloudStorage] = useState<CloudStorageTypes>(
+    configuration?.cloudStorage ?? CloudStorage.default
+  )
   //
   const {
     control,
@@ -222,14 +229,19 @@ export default function MutatePost(
             />
           </div>
           {/*Cloud storage */}
-          <div className="flex gap-4 items-end">
+
           <Autocomplete
             className="max-w-xs "
             label="Nơi lưu trữ"
             labelPlacement="outside"
-            defaultSelectedKey="default"
+            defaultSelectedKey={cloudStorage}
             onSelectionChange={(key) => {
               setCloudStorage(key as CloudStorageTypes)
+              fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/configuration`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cloudStorage: key }),
+              })
             }}
             isDisabled={submitting}
           >
@@ -237,8 +249,7 @@ export default function MutatePost(
               <AutocompleteItem key={cloud.key}>{cloud.title}</AutocompleteItem>
             ))}
           </Autocomplete>
-          <CgDanger className="text-2xl text-red-500" />
-          </div>
+
           {/* View Input */}
           <div className="flex gap-4 justify-start items-end">
             <Input

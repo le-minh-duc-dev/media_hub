@@ -7,10 +7,13 @@ import { GirlType } from "@/types/girls.types"
 import { deleteLeakUploadedMedia } from "@/serverActions/deleteLeakUploadedMedia"
 import { useRouter } from "next/navigation"
 
-export default function CreateGirl(props: Readonly<{ topics: string }>) {
+export default function CreateGirl(
+  props: Readonly<{ topics: string; configuration: string }>
+) {
   const router = useRouter()
   return (
     <MutateGirl
+      configuration={props.configuration}
       topics={props.topics}
       onSubmit={async (
         data,

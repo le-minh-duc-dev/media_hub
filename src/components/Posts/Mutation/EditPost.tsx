@@ -11,19 +11,28 @@ import { useRouter } from "next/navigation"
 
 export default function EditPost(
   props: Readonly<{
+    configuration: string
+
     girls: string
     initialPost?: string
   }>
 ) {
-  const router  = useRouter()
+  const router = useRouter()
   const deletedUrlsRef = useRef<string[]>([])
   const uploadedUrlsRef = useRef<string[]>([])
   return (
     <div>
       <MutatePost
+        configuration={props.configuration}
         girls={props.girls}
         initialPost={props.initialPost}
-        onSubmit={async (data, setSubmitting, setUploadPercentage, cloudStorage, _id) => {
+        onSubmit={async (
+          data,
+          setSubmitting,
+          setUploadPercentage,
+          cloudStorage,
+          _id
+        ) => {
           const submitData: PostType = { ...data }
           const body = submitData.body
           setUploadPercentage(0)
@@ -35,7 +44,7 @@ export default function EditPost(
               let tried = 0
               let url = ""
               while (tried < 3 && !url) {
-                url = await uploadFile(file,cloudStorage)
+                url = await uploadFile(file, cloudStorage)
                 tried += 1
               }
               setUploadPercentage((pre) => pre + Math.floor(100 / totalFile))

@@ -18,8 +18,9 @@ import React, { useMemo, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { FaCrown } from "react-icons/fa"
 import ImageItem from "./ImageItem"
-import { CgDanger } from "react-icons/cg"
 import { CloudStorageTypes } from "@/types/media.types"
+import { ConfigurationType } from "@/types/configuration.types"
+import { CloudStorage } from "@/services/media/cloudStorage"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -36,6 +37,7 @@ const cloudStorages = [
 ]
 export default function MutateGirl(
   props: Readonly<{
+    configuration: string
     topics: string
     initialGirl?: string
     onSubmit: (
@@ -43,12 +45,15 @@ export default function MutateGirl(
       setSubmitting: React.Dispatch<React.SetStateAction<boolean>>,
       setUploadPercentage: React.Dispatch<React.SetStateAction<number>>,
       girlFile: File | undefined,
-      cloudStorage:CloudStorageTypes,
+      cloudStorage: CloudStorageTypes,
       _id?: string
     ) => Promise<void>
   }>
 ) {
   const topics = useMemo<TopicType[]>(() => JSON.parse(props.topics), [props])
+  const configuration: ConfigurationType | undefined = JSON.parse(
+    props.configuration
+  )
   let initialGirl: GirlType | undefined
   if (props.initialGirl) {
     initialGirl = JSON.parse(props.initialGirl)
@@ -59,7 +64,9 @@ export default function MutateGirl(
   // girl image file
   const [girlFile, setGirlFile] = useState<File | undefined>(undefined)
   //
-  const [cloudStorage, setCloudStorage] = useState<CloudStorageTypes>("default")
+  const [cloudStorage, setCloudStorage] = useState<CloudStorageTypes>(
+    configuration?.cloudStorage ?? CloudStorage.default
+  )
   //
   const {
     control,
@@ -163,26 +170,29 @@ export default function MutateGirl(
               )}
             />
           </div>
+
           {/*Cloud storage */}
-          <div className="flex gap-4 items-end">
-            <Autocomplete
-              className="max-w-xs "
-              label="Nơi lưu trữ"
-              labelPlacement="outside"
-              defaultSelectedKey="default"
-              onSelectionChange={(key) => {
-                setCloudStorage(key as CloudStorageTypes)
-              }}
-              isDisabled={submitting}
-            >
-              {cloudStorages.map((cloud) => (
-                <AutocompleteItem key={cloud.key}>
-                  {cloud.title}
-                </AutocompleteItem>
-              ))}
-            </Autocomplete>
-            <CgDanger className="text-2xl text-red-500" />
-          </div>
+
+          <Autocomplete
+            className="max-w-xs "
+            label="Nơi lưu trữ"
+            labelPlacement="outside"
+            defaultSelectedKey={cloudStorage}
+            onSelectionChange={(key) => {
+              setCloudStorage(key as CloudStorageTypes)
+              fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/configuration`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cloudStorage: key }),
+              })
+            }}
+            isDisabled={submitting}
+          >
+            {cloudStorages.map((cloud) => (
+              <AutocompleteItem key={cloud.key}>{cloud.title}</AutocompleteItem>
+            ))}
+          </Autocomplete>
+
           {/* VIP Post Switch */}
           <div>
             <Controller

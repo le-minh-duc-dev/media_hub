@@ -1,5 +1,7 @@
+import { auth } from "@/authentication/auth"
 import { protectUpdateContentPage } from "@/authentication/protect"
 import CreatePost from "@/components/Posts/Mutation/CreatePost"
+import { getConfiguration } from "@/services/configuration"
 import { getGirl } from "@/services/girls"
 import { GirlType } from "@/types/girls.types"
 import { Metadata } from "next"
@@ -29,7 +31,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 export default async function Page() {
   await protectUpdateContentPage()
+  const session = await auth()
+  const configuration = await getConfiguration(session!.user.id!)
   const girls: GirlType[] = await getGirl()
 
-  return <CreatePost girls={JSON.stringify(girls)} />
+
+  return <CreatePost girls={JSON.stringify(girls)} configuration={JSON.stringify(configuration)}/>
 }

@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation"
 
 export default function EditGirl(
   props: Readonly<{
+    configuration:string
     topics: string
     initialGirl: string
   }>
@@ -18,6 +19,7 @@ export default function EditGirl(
 
   return (
     <MutateGirl
+    configuration={props.configuration}
       initialGirl={props.initialGirl}
       topics={props.topics}
       onSubmit={async (

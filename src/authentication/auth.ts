@@ -2,9 +2,13 @@ import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import GitHub from "next-auth/providers/github"
 import { dbConnect } from "../database/connect"
-import { createUser, getUserByEmail } from "../services/users"
+import { createUser, GET_USER_TAG, getUserByEmail } from "../services/users"
 import { UserType } from "../types/users.types"
 import { Role } from "./helper"
+import { createConfiguration } from "@/services/configuration"
+import mongoose from "mongoose"
+import { CloudStorage } from "@/services/media/cloudStorage"
+import { revalidateTag } from "next/cache"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google, GitHub],
@@ -12,11 +16,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ profile }) {
       if (profile) {
         try {
-          await dbConnect()
           const user = await getUserByEmail(profile.email as string)
 
           if (!user) {
-            createUser(profile.name!, profile.email!, profile.picture)
+            await dbConnect()
+            const dbSession = await mongoose.startSession()
+            try {
+              dbSession.startTransaction()
+              const user = (await createUser(
+                profile.name!,
+                profile.email!,
+                profile.picture,
+                dbSession
+              )) as UserType | null
+              revalidateTag(GET_USER_TAG)
+              console.log(user);
+              if (user == null) throw Error("User is null")
+              await createConfiguration(
+                user._id.toString(),
+                CloudStorage.default,
+                dbSession
+              )
+              dbSession.commitTransaction()
+            } catch (error) {
+              console.log(error)
+              dbSession.abortTransaction()
+              return false
+            }
           }
         } catch (error) {
           console.log(error)

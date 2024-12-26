@@ -1,5 +1,6 @@
 import { dbConnect } from "@/database/connect"
 import User from "@/database/models/User"
+import mongoose from "mongoose"
 // import bcrypt from "bcryptjs"
 import { unstable_cache } from "next/cache"
 
@@ -30,11 +31,12 @@ export async function createUser(
   name: string,
   email: string,
   // password: string,
-  url?: string
+  url?: string,
+  session?: mongoose.mongo.ClientSession
 ) {
   await dbConnect()
   // const salt = 10
   // const hashedPassword = await bcrypt.hash(password, salt)
   const user = new User({ name, email, url })
-  return await user.save()
+  return await user.save({ session })
 }

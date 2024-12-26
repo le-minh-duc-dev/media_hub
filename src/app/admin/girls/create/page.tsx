@@ -4,6 +4,8 @@ import { getTopic } from "@/services/topics"
 import { TopicType } from "@/types/topics.types"
 import React from "react"
 import { Metadata } from "next"
+import { auth } from "@/authentication/auth"
+import { getConfiguration } from "@/services/configuration"
 export async function generateMetadata(): Promise<Metadata> {
   const title = "Tạo girl xinh"
   const description =
@@ -30,6 +32,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 export default async function page() {
   await protectUpdateContentPage()
+  const session = await auth()
+  const configuration = await getConfiguration(session!.user.id!)
   const topics: TopicType[] = await getTopic({})
-  return <CreateGirl topics={JSON.stringify(topics)} />
+  return (
+    <CreateGirl
+      topics={JSON.stringify(topics)}
+      configuration={JSON.stringify(configuration)}
+    />
+  )
 }

@@ -1,5 +1,7 @@
+import { auth } from "@/authentication/auth"
 import { protectUpdateContentPage } from "@/authentication/protect"
 import EditGirl from "@/components/Girls/Mutation/EditGirl"
+import { getConfiguration } from "@/services/configuration"
 import { getGirl } from "@/services/girls"
 import { getTopic } from "@/services/topics"
 import { GirlType } from "@/types/girls.types"
@@ -44,7 +46,8 @@ export default async function Page({
 }>) {
   await protectUpdateContentPage()
   const param = (await params).param
-
+ const session = await auth()
+  const configuration= await getConfiguration(session!.user.id!)
   const [topics, girl]: [TopicType[], PostType] = await Promise.all([
     await getTopic(),
     await getGirl({ param }, true),
@@ -52,6 +55,7 @@ export default async function Page({
   if (!girl) throw Error("There's no girl.")
   return (
     <EditGirl
+    configuration={JSON.stringify(configuration)}
       topics={JSON.stringify(topics)}
       initialGirl={JSON.stringify(girl)}
     />

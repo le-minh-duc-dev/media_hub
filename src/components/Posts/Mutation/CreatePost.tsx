@@ -9,12 +9,14 @@ import { useRouter } from "next/navigation"
 export default function CreatePost(
   props: Readonly<{
     girls: string
+    configuration:string
     initialPost?: string
   }>
 ) {
   const router = useRouter()
   return (
     <MutatePost
+      configuration={props.configuration}
       girls={props.girls}
       initialPost={props.initialPost}
       onSubmit={async (data, setSubmitting, setUploadPercentage, cloudStorage) => {
