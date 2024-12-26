@@ -5,12 +5,13 @@ import {
 } from "@/services/configuration"
 import { revalidateTag } from "next/cache"
 
-export const POST = auth(async function POST(req) {
+export async function POST(req: Request): Promise<Response> {
+  const session = await auth()
+  const user = session!.user
   const { cloudStorage } = await req.json()
-  const user = req.auth!.user
   if (cloudStorage != "default" && cloudStorage != "v1")
     return Response.json({ status: false })
   await updateConfiguration(user.id!, cloudStorage)
   revalidateTag(GET_CONFIGURATION_TAG)
   return Response.json({ status: true })
-})
+}
