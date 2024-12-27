@@ -14,13 +14,15 @@ import {
   Button,
 } from "@nextui-org/react"
 import dynamic from "next/dynamic"
-import React, { useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { FaCrown } from "react-icons/fa"
 import ImageItem from "./ImageItem"
 import { CloudStorageTypes } from "@/types/media.types"
 import { ConfigurationType } from "@/types/configuration.types"
 import { CloudStorage } from "@/services/media/cloudStorage"
+import { debounce } from "@/lib/debouce"
+import { checkGirlExists } from "@/clientApi/girls"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -72,7 +74,9 @@ export default function MutateGirl(
     control,
     register,
     handleSubmit,
-
+    setError,
+    clearErrors,
+    watch,
     formState: { errors },
   } = useForm<GirlType>({
     defaultValues: {
@@ -99,6 +103,27 @@ export default function MutateGirl(
       initialGirl?._id?.toString()
     )
   }
+
+  //check name exists
+  const debounceCheckPostsExists = useCallback(
+    debounce(async (name: string) => {
+      const isExist = await checkGirlExists(name)
+      if (isExist) {
+        setError("name", { message: "Họ và tên đã tồn tại" })
+      } else {
+        clearErrors("name")
+      }
+    }, 2000),
+    []
+  )
+
+  const name = watch("name")
+  useEffect(() => {
+    if (!name) return
+    debounceCheckPostsExists(name)
+  }, [name, debounceCheckPostsExists])
+
+  //
 
   if (!topics) return <div>No topics yet.</div>
   return (

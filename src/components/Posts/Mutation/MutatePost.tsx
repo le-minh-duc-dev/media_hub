@@ -167,6 +167,8 @@ export default function MutatePost(
 
   const title = watch("title")
   useEffect(() => {
+    if (!title) return
+
     debounceCheckPostsExists(title)
   }, [title, debounceCheckPostsExists])
 

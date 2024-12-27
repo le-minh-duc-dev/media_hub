@@ -1,11 +1,13 @@
+import { checkTopicExists } from "@/clientApi/topics"
 import DangerousSection from "@/components/DangerousSection"
+import { debounce } from "@/lib/debouce"
 import { deleteTopic } from "@/serverActions/topics"
 import { TopicType } from "@/types/topics.types"
 import { MutateTopicSchema } from "@/zod/MutateTopicSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input, Switch, Button } from "@nextui-org/react"
 import dynamic from "next/dynamic"
-import React, { useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { FaCrown } from "react-icons/fa"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
@@ -32,7 +34,9 @@ export default function MutateTopic(
     control,
     register,
     handleSubmit,
-
+    setError,
+    clearErrors,
+    watch,
     formState: { errors },
   } = useForm<TopicType>({
     defaultValues: {
@@ -47,6 +51,27 @@ export default function MutateTopic(
     await props.onSubmit(data, setSubmitting, initialTopic?._id?.toString())
   }
 
+  //check name exists
+  const debounceCheckPostsExists = useCallback(
+    debounce(async (name: string) => {
+      const isExist = await checkTopicExists(name)
+      if (isExist) {
+        setError("name", { message: "Tên đã tồn tại" })
+      } else {
+        clearErrors("name")
+      }
+    }, 2000),
+    []
+  )
+
+  const name = watch("name")
+  useEffect(() => {
+    if (!name) return
+    debounceCheckPostsExists(name)
+  }, [name, debounceCheckPostsExists])
+
+  //
+
   return (
     <div className="mt-12 flex justify-center">
       <div>
@@ -58,7 +83,7 @@ export default function MutateTopic(
           <div>
             <Input
               {...register("name")}
-              label="Họ và tên"
+              label="Tên chủ đề"
               type="text"
               labelPlacement="outside"
               defaultValue={initialTopic?.name ?? ""}
@@ -115,7 +140,7 @@ export default function MutateTopic(
         </form>
         {!!initialTopic && (
           <DangerousSection
-           afterDeletionUrl="/admin/topics"
+            afterDeletionUrl="/admin/topics"
             param={initialTopic.param}
             deleteFn={deleteTopic}
             triggerButtonName="Xóa chủ đề"
