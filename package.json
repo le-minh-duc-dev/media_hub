@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build-and-test":"npm run build && npx playwright test",
+    "build-and-test": "npm run build && npx playwright test",
     "test": "npx playwright test"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "@tiptap/starter-kit": "^2.10.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/web-push": "^3.6.4",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.5.1",

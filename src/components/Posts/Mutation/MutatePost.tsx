@@ -10,7 +10,7 @@ import {
   Switch,
   Tooltip,
 } from "@nextui-org/react"
-import React, { useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { FaCrown } from "react-icons/fa"
 import {
   useForm,
@@ -30,6 +30,8 @@ import { PostTitlePosition, postTitles } from "@/lib/statements"
 import { CloudStorageTypes } from "@/types/media.types"
 import { ConfigurationType } from "@/types/configuration.types"
 import { CloudStorage } from "@/services/media/cloudStorage"
+import { debounce } from "@/lib/debouce"
+import { checkPostExists } from "@/clientApi/posts"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -95,6 +97,8 @@ export default function MutatePost(
     watch,
     setValue,
     getValues,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<PostType>({
     defaultValues: {
@@ -147,6 +151,26 @@ export default function MutatePost(
       setValue("title", `${selectedGirl?.name} ${title.content}`)
     }
   }
+
+  //check title exists
+  const debounceCheckPostsExists = useCallback(
+    debounce(async (title: string) => {
+      const isExist = await checkPostExists(title)
+      if (isExist) {
+        setError("title", { message: "Tiêu đề đã tồn tại" })
+      } else {
+        clearErrors("title")
+      }
+    }, 2000),
+    []
+  )
+
+  const title = watch("title")
+  useEffect(() => {
+    debounceCheckPostsExists(title)
+  }, [title, debounceCheckPostsExists])
+
+  //
   console.log("Errors in form", errors)
   if (!girls) return <div>No girls yet.</div>
   return (
@@ -162,7 +186,11 @@ export default function MutatePost(
         </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-12 grid gap-6">
           {/* Title Input */}
-          <div className="flex gap-4 items-end">
+          <div
+            className={`flex gap-4 ${
+              errors.title ? "items-center" : "items-end"
+            } `}
+          >
             <Controller
               name="title"
               control={control}
@@ -172,7 +200,9 @@ export default function MutatePost(
                   type="text"
                   labelPlacement="outside"
                   value={field.value}
-                  onValueChange={(value) => field.onChange(value)}
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                  }}
                   isInvalid={!!errors.title}
                   errorMessage={errors.title?.message}
                   isDisabled={submitting}

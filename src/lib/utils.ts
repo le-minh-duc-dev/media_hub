@@ -8,12 +8,6 @@ export function getFileType(mimeType: string) {
   }
 }
 
-export async function getData(url: string) {
-  const res = await fetch(url)
-  const data = await res.json()
-  return data
-}
-
 export function getTypeFileOfUrl(url: string) {
   let ext: string | string[] | undefined = url.split(".")
 
@@ -34,15 +28,7 @@ export function getTypeFileOfUrl(url: string) {
   return "unknown"
 }
 
-export function normalizeHTMLString(htmlString: string) {
-  // Replace encoded characters with their corresponding symbols
-  const normalizedHTML = htmlString
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&nbsp;/g, " ")
 
-  return normalizedHTML
-}
 export function formatDateTime(rawDateTime: string) {
   const dateObj = new Date(rawDateTime)
   const hours = dateObj.getUTCHours().toString().padStart(2, "0")
@@ -132,3 +118,5 @@ export function compareDates(date1: string, date2: string) {
     return 0 // dates are equal
   }
 }
+
+
