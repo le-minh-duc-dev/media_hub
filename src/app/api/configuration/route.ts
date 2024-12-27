@@ -5,7 +5,7 @@ import {
 } from "@/services/configuration"
 import { revalidateTag } from "next/cache"
 
-export async function POST(req: Request): Promise<Response> {
+export async function POST(req: Request){
   const session = await auth()
   const user = session!.user
   const { cloudStorage } = await req.json()

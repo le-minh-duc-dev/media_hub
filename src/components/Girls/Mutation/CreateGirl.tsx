@@ -1,7 +1,7 @@
 "use client"
 import React from "react"
 import MutateGirl from "./MutateGirl"
-import { uploadFile } from "@/services/media/clientService"
+import { getSignature, uploadFile } from "@/services/media/clientService"
 import { createGirl } from "@/serverActions/girls"
 import { GirlType } from "@/types/girls.types"
 import { deleteLeakUploadedMedia } from "@/serverActions/deleteLeakUploadedMedia"
@@ -28,10 +28,11 @@ export default function CreateGirl(
         setSubmitting(true)
 
         if (girlFile) {
+          const signData = await getSignature(cloudStorage)
           let tried = 0
           let url = ""
           while (tried < 3 && !url) {
-            url = await uploadFile(girlFile, cloudStorage)
+            url = await uploadFile(girlFile, signData, cloudStorage)
             tried += 1
           }
           setUploadPercentage(100)

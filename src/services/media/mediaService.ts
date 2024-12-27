@@ -4,6 +4,40 @@ import {
   extractPublicId,
   getTypeFileOfUrl,
 } from "@/lib/utils"
+import { CloudStorageTypes } from "@/types/media.types"
+
+export function getUploadPresetByCloudStorage(cloudStorage: CloudStorageTypes) {
+  return cloudStorage == "default"
+    ? process.env.CLOUDINARY_PRESET
+    : process.env.CLOUDINARY_PRESET_V2
+}
+
+export function getApiKeyByCloudStorage(cloudStorage: CloudStorageTypes) {
+  return cloudStorage == "default"
+    ? process.env.CLOUDINARY_KEY
+    : process.env.CLOUDINARY_KEY_V2
+}
+
+export function getApiNameByCloudStorage(cloudStorage: CloudStorageTypes) {
+  return cloudStorage == "default"
+    ? process.env.CLOUDINARY_CLOUD_NAME
+    : process.env.CLOUDINARY_CLOUD_NAME_v2
+}
+
+export function getApiSecretByCloudStorage(cloudStorage: CloudStorageTypes) {
+  return cloudStorage == "default"
+    ? process.env.CLOUDINARY_SECRET
+    : process.env.CLOUDINARY_SECRET_V2
+}
+
+export function getConfigByCloudStorage(cloudStorage: CloudStorageTypes) {
+  return {
+    api_key: getApiKeyByCloudStorage(cloudStorage),
+    api_secret: getApiSecretByCloudStorage(cloudStorage),
+    cloud_name: getApiNameByCloudStorage(cloudStorage),
+    secure: true,
+  }
+}
 
 function getConfig(url: string) {
   const cloudName = extractCloudName(url)

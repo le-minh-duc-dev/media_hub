@@ -1,7 +1,7 @@
 "use client"
 import MutatePost from "./MutatePost"
 import { PostType } from "@/types/posts.types"
-import { uploadFile } from "@/services/media/clientService"
+import { getSignature, uploadFile } from "@/services/media/clientService"
 import { createPost } from "@/serverActions/posts"
 import { deleteLeakUploadedMedia } from "@/serverActions/deleteLeakUploadedMedia"
 import slug from "slug"
@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 export default function CreatePost(
   props: Readonly<{
     girls: string
-    configuration:string
+    configuration: string
     initialPost?: string
   }>
 ) {
@@ -19,19 +19,25 @@ export default function CreatePost(
       configuration={props.configuration}
       girls={props.girls}
       initialPost={props.initialPost}
-      onSubmit={async (data, setSubmitting, setUploadPercentage, cloudStorage) => {
+      onSubmit={async (
+        data,
+        setSubmitting,
+        setUploadPercentage,
+        cloudStorage
+      ) => {
         const submitData: PostType = { ...data }
         const body = submitData.body
         setUploadPercentage(0)
         setSubmitting(true)
         const totalFile = body.filter((bodyItem) => !!bodyItem.file).length
+        const signData = await getSignature(cloudStorage)
         await Promise.all(
           body.map(async ({ file }, index) => {
             if (!file) return
             let tried = 0
             let url = ""
             while (tried < 3 && !url) {
-              url = await uploadFile(file, cloudStorage)
+              url = await uploadFile(file, signData, cloudStorage)
               tried += 1
             }
             setUploadPercentage((pre) => pre + Math.floor(100 / totalFile))

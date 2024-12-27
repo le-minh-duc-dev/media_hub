@@ -1,7 +1,7 @@
 "use client"
 import MutatePost from "./MutatePost"
 import { PostType } from "@/types/posts.types"
-import { uploadFile } from "@/services/media/clientService"
+import { getSignature, uploadFile } from "@/services/media/clientService"
 
 import { useRef } from "react"
 import { updatePost } from "@/serverActions/posts"
@@ -38,13 +38,14 @@ export default function EditPost(
           setUploadPercentage(0)
           setSubmitting(true)
           const totalFile = body.filter((bodyItem) => !!bodyItem.file).length
+          const signData = await getSignature(cloudStorage)
           await Promise.all(
             body.map(async ({ file }, index) => {
               if (!file) return
               let tried = 0
               let url = ""
               while (tried < 3 && !url) {
-                url = await uploadFile(file, cloudStorage)
+                url = await uploadFile(file, signData, cloudStorage)
                 tried += 1
               }
               setUploadPercentage((pre) => pre + Math.floor(100 / totalFile))
