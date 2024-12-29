@@ -32,6 +32,7 @@ import { ConfigurationType } from "@/types/configuration.types"
 import { CloudStorage } from "@/services/media/cloudStorage"
 import { debounce } from "@/lib/debouce"
 import { checkPostExists } from "@/clientApi/posts"
+import slug from "slug"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -156,7 +157,7 @@ export default function MutatePost(
   const debounceCheckPostsExists = useCallback(
     debounce(async (title: string) => {
       const isExist = await checkPostExists(title)
-      if (isExist) {
+      if (isExist && (initialPost && slug(title)!=initialPost.param)) {
         setError("title", { message: "Tiêu đề đã tồn tại" })
       } else {
         clearErrors("title")

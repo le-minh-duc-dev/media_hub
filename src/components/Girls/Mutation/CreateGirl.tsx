@@ -43,18 +43,22 @@ export default function CreateGirl(
             console.error("Uploading the file failed! : " + girlFile.name)
           }
         }
-        try {
-          const result = await createGirl(submitData)
-          setSubmitting(false)
-          if (result?.success) {
-            alert("Tạo girl xinh thành công")
-            router.push(`/admin/posts/create`)
-          } else alert("Tạo girl xinh thất bại")
-        } catch (error) {
-          console.log(error)
-          await deleteLeakUploadedMedia([submitData.url])
-          alert("Tạo girl xinh thất bại")
+        let submitTries = 3
+        while (submitTries-- > 0) {
+          try {
+            const result = await createGirl(submitData)
+            if (result?.success) {
+              setSubmitting(false)
+              alert("Tạo girl xinh thành công")
+              router.push(`/admin/posts/create`)
+              return
+            }
+          } catch (error) {
+            console.log(error)
+          }
         }
+        await deleteLeakUploadedMedia([submitData.url])
+        alert("Tạo girl xinh thất bại")
       }}
     />
   )

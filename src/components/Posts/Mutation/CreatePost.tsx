@@ -50,20 +50,24 @@ export default function CreatePost(
             delete body[index].file
           })
         )
-        try {
-          const result = await createPost(submitData)
-          setSubmitting(false)
-          if (result?.success) {
-            alert("Tạo bài viết thành công")
-            router.push(`/posts/${slug(submitData.title)}`)
-          } else alert("Tạo bài viết thất bại")
-        } catch (error) {
-          console.log(error)
-          await deleteLeakUploadedMedia(
-            submitData.body.map((bodyItem) => bodyItem.url)
-          )
-          alert("Tạo bài viết thất bại")
+        let submitTries = 3
+        while (submitTries-- > 0) {
+          try {
+            const result = await createPost(submitData)
+            if (result?.success) {
+              setSubmitting(false)
+              alert("Tạo bài viết thành công")
+              router.push(`/posts/${slug(submitData.title)}`)
+              return
+            }
+          } catch (error) {
+            console.log(error)
+          }
         }
+        await deleteLeakUploadedMedia(
+          submitData.body.map((bodyItem) => bodyItem.url)
+        )
+        alert("Tạo bài viết thất bại")
       }}
       removeFn={(id, body, setValue) => {
         const updatedBody = body.filter((item) => item.id !== id)

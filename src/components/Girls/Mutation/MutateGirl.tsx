@@ -23,6 +23,7 @@ import { ConfigurationType } from "@/types/configuration.types"
 import { CloudStorage } from "@/services/media/cloudStorage"
 import { debounce } from "@/lib/debouce"
 import { checkGirlExists } from "@/clientApi/girls"
+import slug from "slug"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -108,7 +109,7 @@ export default function MutateGirl(
   const debounceCheckPostsExists = useCallback(
     debounce(async (name: string) => {
       const isExist = await checkGirlExists(name)
-      if (isExist) {
+      if (isExist && initialGirl && slug(name) != initialGirl.param) {
         setError("name", { message: "Họ và tên đã tồn tại" })
       } else {
         clearErrors("name")

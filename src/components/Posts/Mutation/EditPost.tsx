@@ -60,24 +60,28 @@ export default function EditPost(
             })
           )
 
-          try {
-            const result = await updatePost(
-              _id!,
-              submitData,
-              deletedUrlsRef.current,
-              uploadedUrlsRef.current
-            )
-            setSubmitting(false)
-
-            if (result?.success) {
-              alert("Cập nhật bài viết thành công")
-              router.push(`/posts/${slug(submitData.title)}`)
-            } else alert("Cập nhật bài viết thất bại")
-          } catch (error) {
-            console.log(error)
-            await deleteLeakUploadedMedia(uploadedUrlsRef.current)
-            alert("Cập nhật bài viết thất bại")
+          let submitTries = 3
+          while (submitTries-- > 0) {
+            try {
+              const result = await updatePost(
+                _id!,
+                submitData,
+                deletedUrlsRef.current,
+                uploadedUrlsRef.current
+              )
+              
+              if (result?.success) {
+                setSubmitting(false)
+                alert("Cập nhật bài viết thành công")
+                router.push(`/posts/${slug(submitData.title)}`)
+                return
+              }
+            } catch (error) {
+              console.log(error)
+            }
           }
+          await deleteLeakUploadedMedia(uploadedUrlsRef.current)
+          alert("Cập nhật bài viết thất bại")
         }}
         removeFn={(id, body, setValue) => {
           const updatedBody = body.filter((item) => item.id !== id)

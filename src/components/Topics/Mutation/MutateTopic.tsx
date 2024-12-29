@@ -10,6 +10,7 @@ import dynamic from "next/dynamic"
 import React, { useCallback, useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { FaCrown } from "react-icons/fa"
+import slug from "slug"
 const TiptapEditor = dynamic(() => import("@/components/Tiptap/Tiptap"), {
   ssr: false,
   loading: () => <p>Editor loading...</p>,
@@ -55,7 +56,7 @@ export default function MutateTopic(
   const debounceCheckPostsExists = useCallback(
     debounce(async (name: string) => {
       const isExist = await checkTopicExists(name)
-      if (isExist) {
+      if (isExist && (initialTopic && slug(name)!=initialTopic.param)) {
         setError("name", { message: "Tên đã tồn tại" })
       } else {
         clearErrors("name")
