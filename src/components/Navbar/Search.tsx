@@ -53,6 +53,7 @@ function Form({
       }}
     >
       <Input
+        autoFocus
         value={inputValue}
         onValueChange={(value) => {
           setInputValue(value)
