@@ -28,6 +28,7 @@
     "cloudinary": "^2.5.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.14.4",
+    "girlxinhv2": "file:",
     "mongoose": "^8.9.0",
     "next": "15.1.0",
     "next-auth": "^5.0.0-beta.25",
