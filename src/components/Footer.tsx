@@ -1,18 +1,17 @@
 "use client"
-import { useTheme } from "next-themes"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 import { slogan } from "@/lib/statements"
 const Image = dynamic(() => import("next/image"), { ssr: false })
 export default function Footer() {
-  const { theme } = useTheme()
+ 
 
   return (
     <div className="min-h-60 p-8 py-16  bg-content2 mt-24 flex flex-col justify-center ">
       <div className="container max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2  gap-8">
         <address className="">
           <ul className="space-y-2 ">
-            <li className="text-2xl font-bold">Về Girl Xinh</li>
+            <li className="text-2xl font-bold">Về Media Hub</li>
             <li>
               <Link href="/policy" className="hover:underline">
                 Chính sách của chúng tôi
@@ -21,25 +20,17 @@ export default function Footer() {
             <li>
               Email:{" "}
               <a
-                href="mailto:girlxinhwebsite@gmail.com"
+                href="mailto:admin@ducle.online"
                 className="hover:underline"
               >
-                girlxinhwebsite@gmail.com
+                admin@ducle.online
               </a>
             </li>
           </ul>
         </address>
 
         <div className=" flex-row gap-4 hidden lg:flex">
-          <Image
-            className="h-16 w-16"
-            src={`/assets/images/logo_${
-              theme?.includes("dark") ? "white" : "black"
-            }_sm_300.png`}
-            alt="logo"
-            width="100"
-            height="100"
-          />
+          <h3 className="font-bold text-lg text-nowrap">Media Hub</h3>
           <p className="text-lg">{slogan}</p>
         </div>
         <div className="flex flex-row gap-4 lg:hidden">

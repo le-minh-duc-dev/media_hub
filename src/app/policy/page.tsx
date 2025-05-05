@@ -29,29 +29,27 @@ export default function page() {
     <div className="lg:w-3/4 p-8 shadow-lg rounded-lg mx-auto">
       <h1 className="text-3xl text-center font-bold">
         {" "}
-        Chính sách của <span className="text-nowrap">Girl Xinh</span>
+        Chính sách của <span className="text-nowrap">Media Hub</span>
       </h1>
       <ul className="pt-16">
         <li className="gap-y-2 mt-4">
-          <h2 className="font-semibold ">🎯Mục đích của Girl Xinh:</h2>
+          <h2 className="font-semibold ">🎯Mục đích của Media Hub:</h2>
           <p className="mt-2">
-            Tổng hợp ảnh của hot girl, hot tiktoker, diễn viên, ca sĩ, người nổi
-            tiếng, ảnh bikini, ảnh sexy, nóng bỏng chất lượng cao. Nơi bổ sung
-            vitamin A cho fan hâm mộ.
+            Tuyển chọn những bức ảnh tuyệt đẹp của các thiếu nữ duyên dáng và
+            xinh xắn.
           </p>
         </li>
         <li className=" gap-y-2 mt-4">
           <h2 className="font-semibold ">🎯Quyền sở hữu hình ảnh, video:</h2>
           <p className="mt-2">
-            Tất cả hình ảnh, video có trong các bài viết trên website Girl Xinh
-            có quyền sở hữu thuộc về các girl xinh có trong ảnh. Mọi yêu cầu đến
-            quyền sở hữu hình ảnh, video trên website Girl Xinh sẽ được tiếp
-            nhận thông qua email:{" "}
+            Tất cả hình ảnh, video có trong các bài viết trên website có quyền
+            sở hữu thuộc về các cô gái có trong ảnh. Mọi yêu cầu đến quyền sở
+            hữu hình ảnh, video trên website sẽ được tiếp nhận thông qua email:{" "}
             <a
-              href="mailto:girlxinhwebsite@gmail.com"
+              href="mailto:admin@ducle.online"
               className="font-semibold underline"
             >
-              girlxinhwebsite@gmail.com
+              admin@ducle.online
             </a>
           </p>
         </li>

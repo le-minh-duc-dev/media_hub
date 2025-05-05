@@ -5,8 +5,8 @@ import { Metadata } from "next"
 import React from "react"
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Quản lý girl xinh"
-  const description = "Chức năng quản lý girl xinh dành riêng cho quản trị viên của " + process.env.NEXT_PUBLIC_SITE_NAME
+  const title = "Quản lý Media Hub"
+  const description = "Chức năng quản lý Media Hub dành riêng cho quản trị viên của " + process.env.NEXT_PUBLIC_SITE_NAME
   return {
     title,
     openGraph: {

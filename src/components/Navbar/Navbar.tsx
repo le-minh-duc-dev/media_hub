@@ -58,17 +58,8 @@ export function Navbar(props: Readonly<NavbarProps>) {
             className="lg:hidden"
           />
           <NavbarBrand>
-            <Link href="/">
-              <Image
-                src={`/assets/images/logo_${
-                  theme?.includes("dark") ? "white" : "black"
-                }_sm_300.png`}
-                alt="logo"
-                width={60}
-                height={60}
-                className="hidden lg:block"
-                // suppressHydrationWarning
-              />
+            <Link href="/" className="font-bold text-lg ">
+              Media Hub
             </Link>
           </NavbarBrand>
         </NavbarContent>

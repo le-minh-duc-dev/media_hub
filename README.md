@@ -1,8 +1,8 @@
-# 🌸 **Girl Xinh**
+# 🌸 **Media Hub**
 
 ## 🌐 **Overview**
 
-**Girl Xinh** is a feature-rich web application built with **Next.js 15**, designed to provide an engaging experience for various user roles—**guests, members, and admins**. It delivers personalized content such as posts, profiles, and topics, alongside automated daily updates and real-time notifications.
+**Media Hub** is a feature-rich web application built with **Next.js 15**, designed to provide an engaging experience for various user roles—**guests, members, and admins**. It delivers personalized content such as posts, profiles, and topics, alongside automated daily updates and real-time notifications.
 
 Key features include:
 

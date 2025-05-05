@@ -4,7 +4,7 @@ import type { MetadataRoute } from "next"
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: process.env.NEXT_PUBLIC_SITE_NAME,
-    short_name: "Girl xinh",
+    short_name: "Media Hub",
     description: slogan,
     start_url: "/",
     display: "standalone",

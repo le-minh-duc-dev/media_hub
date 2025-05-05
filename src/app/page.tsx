@@ -7,7 +7,7 @@ import { getOnlyPublicPost, getPost } from "@/services/posts"
 import { DailyPost } from "@/types/dailyPosts.types"
 
 export async function generateMetadata() {
-  const title = "Trang chủ Girl xinh"
+  const title = "Trang chủ Media Hub"
   return {
     title,
     openGraph: {
