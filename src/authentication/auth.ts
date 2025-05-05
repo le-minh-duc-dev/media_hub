@@ -30,7 +30,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 dbSession
               )) as UserType | null
               revalidateTag(GET_USER_TAG)
-              console.log(user);
               if (user == null) throw Error("User is null")
               await createConfiguration(
                 user._id.toString(),
@@ -63,6 +62,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.canAccessVipContent =
         user.role == Role.Vip || user.role == Role.Admin
       session.user.canUpdateContent = user.role == Role.Admin
+
+      console.log("session: ", session)
       return session
     },
     // async jwt({ token, user, account, profile, isNewUser }) {
