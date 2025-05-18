@@ -1,4 +1,4 @@
-const CACHE_NAME = "cloudinary-image-cache-v1"
+const CACHE_NAME = "cloudinary-image-cache-v2"
 
 self.addEventListener("install", () => {
   console.log("Service Worker installing...")
@@ -24,23 +24,36 @@ self.addEventListener("activate", (event) => {
 })
 
 self.addEventListener("fetch", (event) => {
-  const imageRegex = /^\/assets\/images\/.*\.(jpg|jpeg|png|gif|svg|webp)$/i;
   const requestUrl = new URL(event.request.url)
-  if (requestUrl.hostname === "res.cloudinary.com" || imageRegex.test(requestUrl.pathname)) {
+
+  const isCloudinaryImage =
+    requestUrl.hostname === "res.cloudinary.com" &&
+    /\.(jpg|jpeg|png|gif|svg|webp)$/i.test(requestUrl.pathname)
+
+  const isLocalStaticImage =
+    requestUrl.origin === self.location.origin &&
+    /^\/assets\/images\/.*\.(jpg|jpeg|png|gif|svg|webp)$/i.test(requestUrl.pathname)
+
+  if (isCloudinaryImage || isLocalStaticImage) {
     event.respondWith(
       caches.match(event.request).then((cachedResponse) => {
         if (cachedResponse) {
-          console.log(`Serving cached Cloudinary image: ${requestUrl.href}`)
-          return cachedResponse 
+          console.log(`Serving cached image: ${requestUrl.href}`)
+          return cachedResponse
         }
 
-        console.log(`Fetching and caching Cloudinary image: ${requestUrl.href}`)
-        return fetch(event.request).then((networkResponse) => {
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, networkResponse.clone())
-            return networkResponse
+        return fetch(event.request)
+          .then((networkResponse) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone())
+              console.log(`Caching new image: ${requestUrl.href}`)
+              return networkResponse
+            })
           })
-        })
+          .catch((err) => {
+            console.warn(`Fetch failed for ${requestUrl.href}`, err)
+            return new Response("Image unavailable", { status: 503 })
+          })
       })
     )
   }
@@ -75,5 +88,5 @@ self.addEventListener("notificationclick", function (event) {
   console.log("Notification click received.")
   const url = event.notification.data?.url
   event.notification.close()
-  event.waitUntil(clients.openWindow(url ? url : "https://girlxinh.fun"))
+  event.waitUntil(clients.openWindow(url ? url : process.env.NEXT_PUBLIC_BASE_URL))
 })
